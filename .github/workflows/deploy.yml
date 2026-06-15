@@ -22,15 +22,16 @@ jobs:
       # PHP API endpointy (public/api/*.php) Astro prenesie do dist/ ako static;
       # PHPMailer/composer závislosti sa inštalujú na serveri — viď reporty.
 
-      # FTP-Deploy-Action cez SFTP: automaticky vytvára chýbajúce remote
-      # priečinky (rieši chybu "Unable to canonicalize path" z wlixcc put -r).
+      # SFTP upload. sftp_only:false → akcia použije lftp `mirror -R`, ktorý
+      # automaticky vytvára chýbajúce remote podpriečinky (rieši chybu
+      # "Unable to canonicalize path" z plain `sftp put -r`).
       - name: Deploy via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          protocol: sftp
           server: ${{ secrets.SFTP_HOST }}
           port: ${{ secrets.SFTP_PORT }}
           username: ${{ secrets.SFTP_USER }}
           password: ${{ secrets.SFTP_PASS }}
-          local-dir: ./dist/
-          server-dir: ${{ secrets.SFTP_PATH }}/
+          local_path: './dist/*'
+          remote_path: ${{ secrets.SFTP_PATH }}
+          sftp_only: false
