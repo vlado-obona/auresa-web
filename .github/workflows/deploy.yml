@@ -19,16 +19,18 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      # Skopíruj PHP API endpointy (Astro ich nekopíruje z public/ ak nie sú
-      # routovateľné — sú v public/, takže ich Astro prenesie do dist/ ako static.)
-      # PHPMailer závislosti sa inštalujú na serveri (composer) — viď reporty.
+      # PHP API endpointy (public/api/*.php) Astro prenesie do dist/ ako static;
+      # PHPMailer/composer závislosti sa inštalujú na serveri — viď reporty.
 
+      # FTP-Deploy-Action cez SFTP: automaticky vytvára chýbajúce remote
+      # priečinky (rieši chybu "Unable to canonicalize path" z wlixcc put -r).
       - name: Deploy via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
+          protocol: sftp
           server: ${{ secrets.SFTP_HOST }}
+          port: ${{ secrets.SFTP_PORT }}
           username: ${{ secrets.SFTP_USER }}
           password: ${{ secrets.SFTP_PASS }}
-          local_path: './dist/*'
-          remote_path: ${{ secrets.SFTP_PATH }}
-          sftp_only: true
+          local-dir: ./dist/
+          server-dir: ${{ secrets.SFTP_PATH }}/
