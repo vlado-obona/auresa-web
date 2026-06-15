@@ -35,11 +35,8 @@ jobs:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
           SFTP_PORT: ${{ secrets.SFTP_PORT }}
           SFTP_USER: ${{ secrets.SFTP_USER }}
-          SFTP_PASS: ${{ secrets.SFTP_PASS }}
+          LFTP_PASSWORD: ${{ secrets.SFTP_PASS }}
           SFTP_PATH: ${{ secrets.SFTP_PATH }}
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq lftp
-          umask 077
-          printf 'machine %s login %s password %s\n' "$SFTP_HOST" "$SFTP_USER" "$SFTP_PASS" > "$HOME/.netrc"
-          lftp -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; mkdir -pf \"$SFTP_PATH\"; mirror -R --no-perms --verbose --parallel=4 ./dist/ \"$SFTP_PATH/\"; bye" "sftp://$SFTP_HOST:$SFTP_PORT"
-          rm -f "$HOME/.netrc"
+          lftp -u "$SFTP_USER" --env-password "sftp://$SFTP_HOST:$SFTP_PORT" -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; mkdir -pf \"$SFTP_PATH\"; mirror -R --no-perms --verbose --parallel=4 ./dist/ \"$SFTP_PATH/\"; bye"
