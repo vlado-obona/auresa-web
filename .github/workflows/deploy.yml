@@ -22,16 +22,24 @@ jobs:
       # PHP API endpointy (public/api/*.php) Astro prenesie do dist/ ako static;
       # PHPMailer/composer závislosti sa inštalujú na serveri — viď reporty.
 
-      # SFTP upload. sftp_only:false → akcia použije lftp `mirror -R`, ktorý
-      # automaticky vytvára chýbajúce remote podpriečinky (rieši chybu
-      # "Unable to canonicalize path" z plain `sftp put -r`).
-      - name: Deploy via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          server: ${{ secrets.SFTP_HOST }}
-          port: ${{ secrets.SFTP_PORT }}
-          username: ${{ secrets.SFTP_USER }}
-          password: ${{ secrets.SFTP_PASS }}
-          local_path: './dist/*'
-          remote_path: ${{ secrets.SFTP_PATH }}
-          sftp_only: false
+      # SFTP-only účet (deploy.auresa.sk) NEPOVOĽUJE shell exec:
+      #  - wlixcc sftp_only:true  → `sftp put -r` nevie vytvoriť priečinky
+      #    ("Unable to canonicalize path")
+      #  - wlixcc sftp_only:false → skúša `ssh mkdir` → "exec request failed"
+      #  - SamKirkland FTP-Deploy-Action → nepodporuje protocol: sftp
+      # Riešenie: lftp `mirror -R` vytvára priečinky cez SFTP protokol (MKDIR),
+      # bez shellu. Credentials cez ~/.netrc (mimo command-line = bezpečné voči
+      # špeciálnym znakom v hesle).
+      - name: Deploy via SFTP (lftp)
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          SFTP_PASS: ${{ secrets.SFTP_PASS }}
+          SFTP_PATH: ${{ secrets.SFTP_PATH }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+          umask 077
+          printf 'machine %s login %s password %s\n' "$SFTP_HOST" "$SFTP_USER" "$SFTP_PASS" > "$HOME/.netrc"
+          lftp -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; mkdir -pf \"$SFTP_PATH\"; mirror -R --no-perms --verbose --parallel=4 ./dist/ \"$SFTP_PATH/\"; bye" "sftp://$SFTP_HOST:$SFTP_PORT"
+          rm -f "$HOME/.netrc"
