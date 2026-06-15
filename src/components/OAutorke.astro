@@ -1,0 +1,23 @@
+---
+/* O autorke — portrét + bio + podpis. */
+import { SITE } from '../data/site';
+---
+<section class="d1-section d1-about" id="o-mne">
+  <div class="d1-eyebrow"><span class="d1-eyebrow-title">O autorke</span></div>
+  <div class="d1-about-grid">
+    <figure class="d1-about-portrait">
+      <img src="/images/denisa_confident.webp" alt={`${SITE.author} — interiérová dizajnérka`} width="933" height="1400" loading="lazy" decoding="async" />
+    </figure>
+    <div class="d1-about-text">
+      <p class="d1-about-lead">
+        Volám sa <strong>Denisa Rakašová Lašová</strong> a som zakladateľkou a dizajnérkou Auresa Design Studio — sna, ktorý sa stal mojou prácou.
+      </p>
+      <p>Dizajn pre mňa nie je len profesia. Je to spôsob, akým vnímam svet — a to, čo ma vždy bavilo, som premietla do vlastnej značky. V interiéri vidím potenciál hneď, ako vstúpim do priestoru.</p>
+      <p>Začínala som pri bytoch a rodinných domoch, neskôr pribudli kancelárie. Najviac ma však napĺňa práca pre dentálne kliniky — priestory, kde má dizajn skutočný úžitok. Tu nejde len o estetiku. Ide o to <em>zbaviť pacienta strachu</em>, priniesť pokoj a pohodu tam, kde sa to najmenej čaká.</p>
+      <div class="d1-about-sign">
+        <span class="script">Denisa</span>
+        <div class="au-label">Auresa Design Studio · {SITE.city} · {SITE.country} · od {SITE.foundingYear}</div>
+      </div>
+    </div>
+  </div>
+</section>

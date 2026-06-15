@@ -1,0 +1,97 @@
+---
+/* Kontakt — údaje + formulár (POST /api/kontakt.php). */
+import { SITE, PROJECT_TYPES } from '../data/site';
+---
+<section class="d1-section d1-contact" id="kontakt">
+  <div class="d1-eyebrow"><span class="d1-eyebrow-title">Napíšte nám</span></div>
+  <div class="d1-contact-grid">
+    <div>
+      <p class="d1-contact-lead">V akom <em>priestore</em> ste?</p>
+      <p class="d1-contact-body">
+        Napíšte v jednej-dvoch vetách, kde sa práve nachádzate v projekte — či len uvažujete, máte pôdorys, alebo už staviate. Ozveme sa Vám.
+      </p>
+      <dl class="d1-contact-meta">
+        <div><dt class="au-label">Email</dt><dd><a class="ulink" href={`mailto:${SITE.email}`}>{SITE.email}</a></dd></div>
+        <div><dt class="au-label">Telefón</dt><dd><a class="ulink" href={SITE.phoneHref}>{SITE.phone}</a></dd></div>
+        <div><dt class="au-label">Instagram</dt><dd><a class="ulink" href={SITE.instagram} target="_blank" rel="noreferrer">{SITE.instagramHandle}</a></dd></div>
+        <div><dt class="au-label">Adresa</dt><dd>{SITE.city} · {SITE.country}</dd></div>
+      </dl>
+    </div>
+
+    <div>
+      <form class="au-contact-form" data-au-form action="/api/kontakt.php" method="POST">
+        <div class="au-field">
+          <label for="k-meno">Meno *</label>
+          <input id="k-meno" name="meno" type="text" required autocomplete="name" placeholder="Vaše meno" />
+        </div>
+        <div class="au-field">
+          <label for="k-email">E-mail *</label>
+          <input id="k-email" name="email" type="email" required autocomplete="email" placeholder="vy@example.sk" />
+        </div>
+        <div class="au-field">
+          <label for="k-tel">Telefón *</label>
+          <input id="k-tel" name="telefon" type="tel" required autocomplete="tel" placeholder="+421" />
+        </div>
+        <div class="au-field">
+          <label for="k-typ">Typ projektu</label>
+          <select id="k-typ" name="typ_projektu">
+            <option value="" disabled selected>— vyberte —</option>
+            {PROJECT_TYPES.map((t) => <option>{t}</option>)}
+          </select>
+        </div>
+        <div class="au-field">
+          <label for="k-sprava">Kde ste v projekte *</label>
+          <textarea id="k-sprava" name="sprava" required placeholder="Ešte uvažujem · Mám pôdorys · Pripravujem stavbu · Realizujeme"></textarea>
+        </div>
+
+        <!-- honeypot -->
+        <div class="au-hp" aria-hidden="true">
+          <label for="k-hp">Nevypĺňať</label>
+          <input id="k-hp" name="_hp" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <button type="submit" class="au-cta">Odoslať <span class="arr">→</span></button>
+        <p class="au-form-status" data-au-status role="status" aria-live="polite"></p>
+        <p class="au-form-note">
+          Odoslaním formulára spracúvame vaše údaje za účelom odpovede na dopyt. Viac v
+          <a href="/ochrana-osobnych-udajov/">zásadách ochrany osobných údajov</a>.
+        </p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.querySelector('[data-au-form]');
+  const status = document.querySelector('[data-au-status]');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!(form instanceof HTMLFormElement) || !status) return;
+    const hp = form.querySelector('input[name="_hp"]');
+    if (hp instanceof HTMLInputElement && hp.value.trim() !== '') return; // bot
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    status.textContent = 'Odosielam…';
+    status.removeAttribute('data-state');
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(form).entries())),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        form.reset();
+        status.setAttribute('data-state', 'ok');
+        status.textContent = data.message || 'Ďakujeme. Ozveme sa Vám.';
+      } else {
+        status.setAttribute('data-state', 'err');
+        status.textContent = data.message || 'Správu sa nepodarilo odoslať. Napíšte nám prosím priamo na info@auresa.sk.';
+      }
+    } catch {
+      status.setAttribute('data-state', 'err');
+      status.textContent = 'Správu sa nepodarilo odoslať. Napíšte nám prosím priamo na info@auresa.sk.';
+    }
+  });
+</script>

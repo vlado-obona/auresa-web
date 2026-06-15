@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const realizacie = (await getCollection('realizacie')).sort(
+  (a, b) => (b.data.rok ?? 0) - (a.data.rok ?? 0)
+);
+const title = 'Realizácie — Auresa Design Studio';
+const description = 'Vybrané realizácie interiérového dizajnu — dentálne kliniky, domy a kancelárie. Auresa Design Studio, Prešov.';
+---
+<BaseLayout title={title} description={description}>
+  <section class="au-page-hero">
+    <div class="d1-eyebrow"><span class="d1-eyebrow-title">Realizácie</span></div>
+    <h1>Vybrané <em>realizácie.</em></h1>
+  </section>
+  <div class="au-prose">
+    {realizacie.length === 0 ? (
+      <p><em>Galériu realizácií pripravujeme.</em> Pridáva sa cez CMS (<code>/admin/</code>). Medzitým si pozrite referencie pri jednotlivých vertikálach alebo nám napíšte.</p>
+    ) : (
+      <ul>
+        {realizacie.map((r) => (
+          <li><a href={`/realizacie/${r.data.slug}/`}>{r.data.nazov}</a> — {r.data.lokalita} · {r.data.rok}</li>
+        ))}
+      </ul>
+    )}
+    <div class="au-stub-cta">
+      <a href="/#kontakt" class="au-cta">Napíšte nám <span class="arr">→</span></a>
+    </div>
+  </div>
+</BaseLayout>

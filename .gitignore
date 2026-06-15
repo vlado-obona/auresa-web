@@ -1,0 +1,17 @@
+# secrets — NIKDY necommitovať
+.env
+.env.local
+.env.production
+
+# deps & build
+node_modules/
+dist/
+.astro/
+
+# php deps (server-side, installed on host)
+public/api/vendor/
+public/api/composer.lock
+
+# os / editor
+.DS_Store
+Thumbs.db

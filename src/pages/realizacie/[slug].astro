@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('realizacie');
+  return entries.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const title = `${entry.data.nazov} — Auresa Design Studio`;
+---
+<BaseLayout title={title} description={entry.data.perex} ogImage={entry.data.hlavna_foto}>
+  <section class="au-page-hero">
+    <div class="d1-eyebrow"><span class="d1-eyebrow-title">Realizácia</span></div>
+    <h1>{entry.data.nazov}</h1>
+    <p>{entry.data.lokalita} · {entry.data.rok}</p>
+  </section>
+  <div class="au-prose">
+    <p>{entry.data.perex}</p>
+    {entry.data.case_study && <p>{entry.data.case_study}</p>}
+    <Content />
+    <div class="au-stub-cta">
+      <a href="/realizacie/" class="au-cta">Všetky realizácie <span class="arr">→</span></a>
+      <a href="/#kontakt" class="au-cta">Napíšte nám <span class="arr">→</span></a>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+/* Hero — split text + portrét. */
+import { SITE } from '../data/site';
+---
+<section class="d1-cover" id="top">
+  <div class="d1-cover-frame">
+    <h1 class="d1-cover-title">Priestor má <em>svoju dušu.</em></h1>
+    <p class="d1-cover-sub">My ju oblečieme do svetla a detailu.</p>
+    <div class="d1-cover-byline">
+      <div class="au-label">Autorka štúdia</div>
+      <div class="d1-cover-byline-name">{SITE.author}</div>
+    </div>
+  </div>
+  <figure class="d1-cover-portrait">
+    <img
+      src="/images/denisa_main.webp"
+      alt={`${SITE.author} — zakladateľka Auresa Design Studio`}
+      width="933"
+      height="1400"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </figure>
+</section>

@@ -1,0 +1,52 @@
+---
+/* Footer — pre-footer CTA + grid + právny riadok. */
+import logo from '../assets/logo/auresa_logo_ink_tight.svg?raw';
+import { SITE, VERTS } from '../data/site';
+---
+<footer class="d1-footer">
+  <div class="d1-footer-cta">
+    <p class="d1-footer-cta-lead">Máte priestor, ktorý <em>čaká</em>?</p>
+    <a href="/#kontakt" class="au-cta">Napíšte štúdiu <span class="arr">→</span></a>
+  </div>
+
+  <div class="d1-footer-grid">
+    <div class="d1-footer-mark" set:html={logo}></div>
+
+    <div>
+      <div class="au-label">Štúdio</div>
+      <ul class="d1-footer-list">
+        <li>{SITE.city} · {SITE.country}</li>
+        <li><a href={`mailto:${SITE.email}`} class="ulink">{SITE.email}</a></li>
+        <li><a href={SITE.phoneHref} class="ulink">{SITE.phone}</a></li>
+        <li>IČO {SITE.ico}</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="au-label">Vertikály</div>
+      <ul class="d1-footer-list">
+        {VERTS.map((v) => (
+          <li><a class="ulink" href={`/${v.slug}/`}>{v.title}</a></li>
+        ))}
+      </ul>
+    </div>
+
+    <div>
+      <div class="au-label">Sledujte</div>
+      <ul class="d1-footer-list d1-footer-social">
+        <li><a href={SITE.instagram} target="_blank" rel="noreferrer" class="ulink"><span class="d1-social-glyph" aria-hidden="true">IG</span><span>{SITE.instagramHandle}</span></a></li>
+        <li><a href={SITE.facebook} target="_blank" rel="noreferrer" class="ulink"><span class="d1-social-glyph" aria-hidden="true">FB</span><span>{SITE.facebookLabel}</span></a></li>
+        <li><a href={SITE.url} target="_blank" rel="noreferrer" class="ulink"><span class="d1-social-glyph" aria-hidden="true">↗</span><span>auresa.sk</span></a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="d1-footer-bottom au-label">
+    <span>© 2026 {SITE.legalName} · IČO {SITE.ico}</span>
+    <span class="d1-footer-legal">
+      <a class="ulink" href="/ochrana-osobnych-udajov/">Ochrana osobných údajov</a> ·
+      <a class="ulink" href="/pravne-informacie/">Právne informácie</a> ·
+      <a class="ulink" href="/cookies/">Cookies</a>
+    </span>
+  </div>
+</footer>

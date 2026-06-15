@@ -1,0 +1,8 @@
+{
+  "name": "auresa/api",
+  "description": "Server-side API endpointy pre auresa.sk (kontaktný formulár + Decap OAuth)",
+  "require": {
+    "php": ">=8.1",
+    "phpmailer/phpmailer": "^6.9"
+  }
+}

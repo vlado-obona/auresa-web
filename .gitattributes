@@ -1,0 +1,6 @@
+# Normalizuj na LF v repo (web beží na Linuxe — Websupport).
+* text=auto eol=lf
+*.webp binary
+*.png binary
+*.jpg binary
+*.ico binary

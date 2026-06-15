@@ -1,0 +1,70 @@
+---
+/* SidePanel — slide-in overlay z prava pre tri vertikály. Prepína obsah
+   podľa data-panel (dental/domy/kanc). Spúšťa sa klikom na [data-panel]
+   (nav tlačidlá + karty vertikál). */
+import { VERTS } from '../data/site';
+---
+<div class="au-sheet-bg" data-sheet-bg></div>
+<aside class="au-sheet" data-sheet role="dialog" aria-modal="true" aria-label="Detail vertikály" hidden>
+  <button class="au-sheet-close" data-sheet-close>Zavrieť ×</button>
+
+  {VERTS.map((v) => (
+    <div class="au-panel" data-panel-content={v.key}>
+      <div class="au-label">{v.panel.label}</div>
+      <h2>{v.title}</h2>
+      <p class="au-panel-perex">{v.panel.perex}</p>
+      <p class="au-panel-body">{v.panel.body}</p>
+      <dl class="au-panel-meta">
+        <div><dt class="au-label">Klient</dt><dd>{v.panel.klient}</dd></div>
+        <div><dt class="au-label">Cyklus</dt><dd>{v.panel.cyklus}</dd></div>
+      </dl>
+      <div class="au-label" style="margin-bottom:12px">Referenčné realizácie</div>
+      <ul class="au-panel-refs">
+        {v.panel.referencie.map((r) => <li>{r}</li>)}
+      </ul>
+      <a href={`/${v.slug}/`} class="au-cta" style="margin-top:32px">Otvoriť plnú stránku <span class="arr">→</span></a>
+    </div>
+  ))}
+</aside>
+
+<script>
+  const bg = document.querySelector('[data-sheet-bg]');
+  const sheet = document.querySelector('[data-sheet]');
+  const closeBtn = document.querySelector('[data-sheet-close]');
+  const panels = document.querySelectorAll('[data-panel-content]');
+  let lastFocus = null;
+
+  function openPanel(key) {
+    if (!sheet || !bg) return;
+    panels.forEach((p) => p.classList.toggle('active', p.getAttribute('data-panel-content') === key));
+    lastFocus = document.activeElement;
+    sheet.hidden = false;
+    requestAnimationFrame(() => {
+      bg.classList.add('open');
+      sheet.classList.add('open');
+    });
+    document.body.style.overflow = 'hidden';
+    closeBtn && closeBtn.focus();
+  }
+  function closePanel() {
+    if (!sheet || !bg) return;
+    bg.classList.remove('open');
+    sheet.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => { if (sheet) sheet.hidden = true; }, 550);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  document.addEventListener('click', (e) => {
+    const trigger = e.target instanceof Element ? e.target.closest('[data-panel]') : null;
+    if (trigger) {
+      e.preventDefault();
+      openPanel(trigger.getAttribute('data-panel'));
+    }
+  });
+  closeBtn?.addEventListener('click', closePanel);
+  bg?.addEventListener('click', closePanel);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sheet && !sheet.hidden) closePanel();
+  });
+</script>

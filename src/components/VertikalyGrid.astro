@@ -1,0 +1,37 @@
+---
+/* Tri vertikály — triptych. Karta 01 má fotku, 02 a 03 sú čisté placeholdery
+   (bone bg). Klik otvára SidePanel cez data-panel. */
+import { VERTS } from '../data/site';
+---
+<section class="d1-verts-section" id="vertikaly">
+  <div class="d1-verts-head">
+    <div class="d1-eyebrow"><span class="d1-eyebrow-title">Tri vertikály</span></div>
+    <p class="d1-section-lead">
+      Jeden brand, <em>tri dvere.</em> Tri publiká, tri jazyky, jedna filozofia. Vyberte si, kam patríte.
+    </p>
+  </div>
+  <div class="d1-doors">
+    {VERTS.map((v) => (
+      <button
+        type="button"
+        class={`d1-door ${v.cardPhoto ? 'd1-door--photo' : 'd1-door--ph'}`}
+        data-panel={v.key}
+        aria-label={`${v.title} — otvoriť detail`}
+      >
+        {v.cardPhoto && (
+          <div class="d1-door-img">
+            <img src={v.cardPhoto} alt={v.title} width="1800" height="1200" loading="lazy" decoding="async" />
+          </div>
+        )}
+        <div class="d1-door-overlay">
+          <span class="au-label d1-door-num">{v.num}</span>
+          <div class="d1-door-foot">
+            <h3>{v.title}</h3>
+            <p class="d1-door-pull"><em>{v.cardQuote}</em></p>
+            <span class="d1-door-cta">Vstúpte <span class="arr">→</span></span>
+          </div>
+        </div>
+      </button>
+    ))}
+  </div>
+</section>

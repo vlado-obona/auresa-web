@@ -1,0 +1,42 @@
+backend:
+  name: github
+  repo: vlado-obona/auresa-web
+  branch: main
+  base_url: https://auresa.sk
+  auth_endpoint: api/auth
+
+media_folder: public/images/realizacie
+public_folder: /images/realizacie
+
+locale: sk
+
+collections:
+  - name: realizacie
+    label: Realizácie
+    folder: src/content/realizacie
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Názov, name: nazov, widget: string }
+      - { label: Slug, name: slug, widget: string }
+      - label: Vertikála
+        name: vertikala
+        widget: select
+        options: [dental, domy, kancelarie]
+      - { label: Lokalita, name: lokalita, widget: string }
+      - { label: Rok, name: rok, widget: number, value_type: int }
+      - label: Status
+        name: status
+        widget: select
+        options:
+          - { label: Realizácia, value: realizacia }
+          - { label: Render, value: render }
+          - { label: V procese, value: v-procese }
+      - { label: Hlavná fotka, name: hlavna_foto, widget: image }
+      - label: Galéria
+        name: galeria
+        widget: list
+        required: false
+        field: { label: Foto, name: foto, widget: image }
+      - { label: Perex, name: perex, widget: text }
+      - { label: Case study, name: case_study, widget: markdown, required: false }

@@ -1,0 +1,47 @@
+---
+/* Navigácia — sticky, transparent → bone pri scrolle. Prvé tri odkazy
+   otvárajú SidePanel (data-panel); O mne / Kontakt sú kotvy. Mobile: hamburger. */
+import logo from '../assets/logo/auresa_logo_ink_tight.svg?raw';
+import { VERTS } from '../data/site';
+---
+<header class="au-nav" id="au-nav">
+  <a href="/" class="au-nav__logo" aria-label="Auresa Design Studio — domov" set:html={logo}></a>
+
+  <button class="au-nav__toggle" aria-label="Menu" aria-expanded="false" aria-controls="au-nav-links">
+    <span></span>
+  </button>
+
+  <nav class="au-nav__links" id="au-nav-links" aria-label="Hlavná navigácia">
+    {VERTS.map((v) => (
+      <button type="button" class="ulink" data-panel={v.key}>{v.title}</button>
+    ))}
+    <a href="/#o-mne" class="ulink">O mne</a>
+    <a href="/#kontakt" class="ulink">Kontakt</a>
+  </nav>
+</header>
+
+<script>
+  const nav = document.getElementById('au-nav');
+  const toggle = nav?.querySelector('.au-nav__toggle');
+  const links = nav?.querySelectorAll('.au-nav__links a, .au-nav__links button');
+
+  // scroll background
+  const onScroll = () => {
+    if (!nav) return;
+    nav.classList.toggle('scrolled', window.scrollY > 80);
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // mobile menu
+  toggle?.addEventListener('click', () => {
+    const open = nav?.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  links?.forEach((l) =>
+    l.addEventListener('click', () => {
+      nav?.classList.remove('open');
+      toggle?.setAttribute('aria-expanded', 'false');
+    })
+  );
+</script>

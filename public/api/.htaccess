@@ -1,0 +1,13 @@
+# Chráň citlivé súbory v /api pred priamym prístupom cez web.
+# .env, composer manifesty a interné include-y nesmú byť stiahnuteľné.
+<FilesMatch "^(\.env.*|_.*\.php|composer\.(json|lock))$">
+  Require all denied
+</FilesMatch>
+
+# Záloha pre staršie Apache (2.2)
+<IfModule !mod_authz_core.c>
+  <FilesMatch "^(\.env.*|_.*\.php|composer\.(json|lock))$">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+</IfModule>

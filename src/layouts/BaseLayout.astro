@@ -1,0 +1,144 @@
+---
+/* BaseLayout — <head> (SEO + OG + JSON-LD), self-hosted fonty, a globálny
+   shell: Nav + slot + Footer + SidePanel + CookieBanner. */
+
+// Fonty (Fontsource, self-host, latin + latin-ext). 3 rodiny, žiadny monospace.
+import '@fontsource/cormorant-garamond/latin-300.css';
+import '@fontsource/cormorant-garamond/latin-400.css';
+import '@fontsource/cormorant-garamond/latin-500.css';
+import '@fontsource/cormorant-garamond/latin-600.css';
+import '@fontsource/cormorant-garamond/latin-300-italic.css';
+import '@fontsource/cormorant-garamond/latin-400-italic.css';
+import '@fontsource/cormorant-garamond/latin-500-italic.css';
+import '@fontsource/cormorant-garamond/latin-ext-300.css';
+import '@fontsource/cormorant-garamond/latin-ext-400.css';
+import '@fontsource/cormorant-garamond/latin-ext-300-italic.css';
+import '@fontsource/cormorant-garamond/latin-ext-400-italic.css';
+import '@fontsource/inter-tight/latin-300.css';
+import '@fontsource/inter-tight/latin-400.css';
+import '@fontsource/inter-tight/latin-500.css';
+import '@fontsource/inter-tight/latin-600.css';
+import '@fontsource/inter-tight/latin-700.css';
+import '@fontsource/inter-tight/latin-ext-400.css';
+import '@fontsource/inter-tight/latin-ext-500.css';
+import '@fontsource/italianno/latin-400.css';
+import '@fontsource/italianno/latin-ext-400.css';
+
+import '../styles/global.css';
+
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import SidePanel from '../components/SidePanel.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+import { SITE, SEO } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  canonical?: string;
+}
+
+const {
+  title = SEO.defaultTitle,
+  description = SEO.defaultDescription,
+  ogImage = SEO.ogImage,
+  canonical = new URL(Astro.url.pathname, SITE.url).href,
+} = Astro.props;
+
+const ogImageAbs = new URL(ogImage, SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE.url}/#organization`,
+      name: SITE.name,
+      legalName: SITE.legalName,
+      url: SITE.url,
+      email: SITE.email,
+      telephone: SITE.phone,
+      logo: `${SITE.url}/favicon.svg`,
+      foundingDate: SITE.foundingYear,
+      founder: { '@type': 'Person', name: SITE.author },
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Odbojárska 245/46',
+        postalCode: '082 71',
+        addressLocality: 'Lipany',
+        addressCountry: 'SK',
+      },
+      areaServed: 'SK',
+      sameAs: [SITE.instagram, SITE.facebook],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE.url}/#website`,
+      url: SITE.url,
+      name: SITE.name,
+      inLanguage: 'sk-SK',
+      publisher: { '@id': `${SITE.url}/#organization` },
+    },
+    {
+      '@type': 'WebPage',
+      '@id': `${canonical}#webpage`,
+      url: canonical,
+      name: title,
+      description,
+      isPartOf: { '@id': `${SITE.url}/#website` },
+      about: { '@id': `${SITE.url}/#organization` },
+      inLanguage: 'sk-SK',
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="sk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+
+    <!-- OG / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Auresa Design Studio" />
+    <meta property="og:locale" content={SEO.locale} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageAbs} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageAbs} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+
+    <!-- GA4 placeholder (aktivuje sa Fáza 5) -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXX"></script> -->
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a href="#main" class="au-skip">Preskočiť na obsah</a>
+    <div class="au d1">
+      <Nav />
+      <main id="main">
+        <slot />
+      </main>
+      <Footer />
+      <SidePanel />
+      <CookieBanner />
+    </div>
+  </body>
+</html>
