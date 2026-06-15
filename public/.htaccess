@@ -1,0 +1,24 @@
+# Preferuj statický index.html pred index.php (Astro statický web)
+DirectoryIndex index.html index.htm
+
+# Apache na Websupporte (LiteSpeed/Apache 2.4)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+</IfModule>
+
+# Bezpečnostné hlavičky (základ)
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Cache statických assetov (Astro hashované súbory v /_astro/ sú immutable)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/webp "access plus 6 months"
+  ExpiresByType image/svg+xml "access plus 6 months"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
