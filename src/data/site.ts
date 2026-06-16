@@ -15,7 +15,7 @@ export const SITE = {
   phoneHref: 'tel:+421911123181',
   instagram: 'https://www.instagram.com/auresa_designstudio/',
   instagramHandle: '@auresa_designstudio',
-  facebook: 'https://www.facebook.com/auresa.designstudio',
+  facebook: 'https://www.facebook.com/profile.php?id=61590847735460',
   facebookLabel: 'Auresa Design Studio',
   city: 'Prešov',
   country: 'Slovensko',

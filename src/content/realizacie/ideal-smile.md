@@ -33,5 +33,7 @@ galeria:
   - "/images/realizacie/ideal-smile/ideal-smile_recepcia-vizual-02.webp"
   - "/images/realizacie/ideal-smile/ideal-smile_recepcia-vizual-03.webp"
   - "/images/realizacie/ideal-smile/ideal-smile_recepcia-vizual-04.webp"
-perex: "Čistý, svetlý priestor s jemnými organickými tvarmi. Klinika, kam pacient vstupuje s istotou, že je v dobrých rukách."
+perex: "Interiér ambulancie IdealSmile je navrhnutý v teplých prírodných tónoch s dôrazom na moderný nábytok, oblé tvary a príjemnú čakaciu zónu."
 ---
+
+Interiér ambulancie IdealSmile je navrhnutý v teplých prírodných tónoch s dôrazom na moderný nábytok, oblé tvary a príjemnú čakaciu zónu. Výrazným detailom sú dekoratívne nástenné lišty, ktoré boli snom lekára a priestoru dodávajú elegantný, nadčasový charakter. Celok pôsobí pokojne, profesionálne a zároveň útulne pre pacienta.

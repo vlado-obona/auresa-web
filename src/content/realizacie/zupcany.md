@@ -39,5 +39,7 @@ galeria:
   - "/images/realizacie/zupcany/zupcany_wc-01.webp"
   - "/images/realizacie/zupcany/zupcany_wc-02.webp"
   - "/images/realizacie/zupcany/zupcany_wc-03.webp"
-perex: "Zemité tóny a zeleň prinášajú do kliniky pokoj prírody. Priestor, ktorý lieči atmosférou."
+perex: "Ambulancia Župčany je navrhnutá v prírodnej kombinácii dreva, béžových tónov a olivovo-zelenej farby."
 ---
+
+Ambulancia Župčany je navrhnutá v prírodnej kombinácii dreva, béžových tónov a olivovo-zelenej farby. Priestor dopĺňa svetlá recepcia, jemné botanické motívy a funkčne riešená ošetrovňa s dostatkom úložného priestoru. Celý návrh pôsobí čisto, pokojne a prirodzene.

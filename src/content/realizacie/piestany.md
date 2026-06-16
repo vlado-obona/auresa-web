@@ -23,5 +23,7 @@ galeria:
   - "/images/realizacie/piestany/piestany_recepcia-03.webp"
   - "/images/realizacie/piestany/piestany_recepcia-04.webp"
   - "/images/realizacie/piestany/piestany_recepcia-05.webp"
-perex: "Svetlá klinika s mäkkými líniami a prírodnými materiálmi. Priestor, ktorý dýcha pokojom."
+perex: "Svetlá zubná ambulancia v Piešťanoch navrhnutá v jemných béžových tónoch s dôrazom na pokoj, čistotu a príjemný pocit pacienta."
 ---
+
+Svetlá zubná ambulancia v Piešťanoch navrhnutá v jemných béžových tónoch s dôrazom na pokoj, čistotu a príjemný pocit pacienta. Oblá recepcia, prírodné prvky, zeleň a mäkké tvary vytvárajú elegantný priestor bez chladného medicínskeho dojmu.

@@ -19,5 +19,7 @@ galeria:
   - "/images/realizacie/topolcany/topolcany_recepcia-01.webp"
   - "/images/realizacie/topolcany/topolcany_recepcia-detail.webp"
   - "/images/realizacie/topolcany/topolcany_wc.webp"
-perex: "Teplé drevo a organické tvary vytvárajú prostredie, kde sa pacient cíti vítaný."
+perex: "Ambulancia Topoľčany je navrhnutá v svetlej prírodnej palete s kombináciou dreva, jemných béžových tónov a čiernych detailov."
 ---
+
+Ambulancia Topoľčany je navrhnutá v svetlej prírodnej palete s kombináciou dreva, jemných béžových tónov a čiernych detailov. Dominantou priestoru je oblá recepcia s dreveným lamelovým prvkom, ktorá dodáva vstupu moderný a príjemný charakter. Čakacia zóna pôsobí pokojne a útulne, zatiaľ čo ošetrovne sú riešené funkčne, čisto a nadčasovo.

@@ -132,7 +132,7 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
   backdrop-filter: blur(8px);
   border-bottom-color: var(--line-soft);
 }
-.au-nav__logo svg { height: 52px; width: auto; }
+.au-nav__logo svg { height: clamp(56px, 6vw, 70px); width: auto; }
 .au-nav__links { display: flex; gap: 28px; align-items: center; font-size: calc(13px * var(--au-fs)); }
 .au-nav__links a, .au-nav__links button {
   font-family: var(--sans); color: var(--au-text);

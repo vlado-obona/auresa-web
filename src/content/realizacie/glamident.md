@@ -2,7 +2,7 @@
 nazov: "GlamiDent"
 vertikala: "dental"
 lokalita: "Prešov"
-rok: 2024
+rok: 2025
 status: "realizacia"
 hlavna_foto: "/images/realizacie/glamident/glamident_cakaren-hero.webp"
 galeria:
@@ -91,5 +91,7 @@ galeria:
   - "/images/realizacie/glamident/glamident_lounge-vizual-04.webp"
   - "/images/realizacie/glamident/glamident_pracovna-vizual.webp"
   - "/images/realizacie/glamident/glamident_recepcia-vizual.webp"
-perex: "Priestor, kde sa luxus stretáva s pokojom. Vlnité línie, mäkké materiály a zeleň menia návštevu zubára na zážitok bez stresu."
+perex: "Klinika Glamident spája elegantný zdravotnícky priestor s príjemnou atmosférou pre dospelých aj detských pacientov."
 ---
+
+Klinika Glamident spája elegantný zdravotnícky priestor s príjemnou atmosférou pre dospelých aj detských pacientov. Dominantný olivovník priamo v recepcii, olivovo-zelené sedenie, jemné béžové tóny a detský kútik vytvárajú pokojný, moderný a zapamätateľný interiér. Dôležitou súčasťou návrhu je detský kútik a dospávacia miestnosť po zákrokoch, ktoré zvyšujú komfort pacientov a podporujú celkový pocit bezpečia v prostredí kliniky.

@@ -34,5 +34,7 @@ galeria:
   - "/images/realizacie/zvolen/zvolen_spalna-05.webp"
   - "/images/realizacie/zvolen/zvolen_spalna-06.webp"
   - "/images/realizacie/zvolen/zvolen_spalna-07.webp"
-perex: "Mestský byt s charakterom — surové materiály, teplé svetlo a priestor, ktorý má jasný rukopis. (Vizualizácia.)"
+perex: "Vizuál pánskeho bytu vo Zvolene pracuje s výrazným industriálnym charakterom, kde sa stretáva surovosť betónu, tehly a čierneho kovu s teplom dreva a kože."
 ---
+
+Vizuál pánskeho bytu vo Zvolene pracuje s výrazným industriálnym charakterom, kde sa stretáva surovosť betónu, tehly a čierneho kovu s teplom dreva a kože. Presklené priečky, otvorený šatník a priznané materiály dodávajú priestoru mestský, sebavedomý výraz. Výsledkom je interiér s mužskou energiou, ktorý pôsobí štýlovo, prakticky a zároveň útulne.

@@ -25,5 +25,9 @@ galeria:
   - "/images/realizacie/torysa/torysa_satnik.webp"
   - "/images/realizacie/torysa/torysa_spalna-01.webp"
   - "/images/realizacie/torysa/torysa_spalna-02.webp"
-perex: "Vizualizácia rodinného domu, kde sa estetika prepája s pokojom domova. (Projekt vo fáze realizácie.)"
+perex: "Denná časť rodinného domu Torysa je navrhnutá ako teplý, otvorený a rodinný priestor, kde sa prirodzene prepája kuchyňa, jedáleň a obývacia zóna."
 ---
+
+Denná časť rodinného domu Torysa je navrhnutá ako teplý, otvorený a rodinný priestor, kde sa prirodzene prepája kuchyňa, jedáleň a obývacia zóna. Svetlé drevo, jemné neutrálne tóny a čisté línie vytvárajú pokojné zázemie pre každodenný život s deťmi.
+
+Dizajn je postavený na praktickosti, vzdušnosti a rodinnej pohode – veľký ostrov ako centrum diania, pohodlná sedačka na spoločné večery a nábytok na mieru, ktorý spája estetiku s funkčným úložným priestorom. Celok pôsobí moderne, útulne a prirodzene.

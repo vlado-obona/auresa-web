@@ -18,5 +18,7 @@ galeria:
   - "/images/realizacie/artsmile/artsmile_ordinacia-04.webp"
   - "/images/realizacie/artsmile/artsmile_ordinacia-05.webp"
   - "/images/realizacie/artsmile/artsmile_ordinacia-06.webp"
-perex: "Útulná ambulancia, ktorá kladie dôraz na pocit bezpečia. Dizajn, ktorý upokojuje od prvého momentu."
+perex: "Zubná ambulancia Art Smile v jemnej béžovej palete s mramorovým detailom, teplými zemito-olivovými akcentmi a praktickým riešením úložných zón."
 ---
+
+Zubná ambulancia Art Smile v jemnej béžovej palete s mramorovým detailom, teplými zemito-olivovými akcentmi a praktickým riešením úložných zón. Návrh spája čistotu zdravotníckeho priestoru s elegantným, pokojnejším dizajnom.

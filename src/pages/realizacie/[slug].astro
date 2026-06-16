@@ -10,6 +10,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const d = entry.data;
+const { Content } = await entry.render();
 const STATUS_LABEL: Record<string, string> = { realizacia: 'Realizácia', render: 'Render', 'v-procese': 'V procese' };
 const title = `${d.nazov} — Auresa Design Studio`;
 // galéria bez hero (hero je vyššie ako veľký obrázok), ostatné do mriežky
@@ -33,6 +34,8 @@ const galeriaImgs = (d.galeria ?? []) as string[];
         <div><dt class="au-label">Vertikála</dt><dd>{d.vertikala === 'dental' ? 'Dentálna klinika' : 'Domy a byty'}</dd></div>
       </dl>
     </div>
+
+    <div class="au-real-popis"><Content /></div>
 
     <Gallery images={galeriaImgs} alt={d.nazov} />
 
@@ -60,6 +63,11 @@ const galeriaImgs = (d.galeria ?? []) as string[];
   .au-real-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 24px; }
   .au-real-meta dt { margin-bottom: 4px; }
   .au-real-meta dd { font-size: calc(15px * var(--au-fs)); }
+  .au-real-popis { max-width: 64ch; margin-bottom: 56px; }
+  .au-real-popis :global(p) {
+    font-size: calc(18px * var(--au-fs)); line-height: 1.75; color: var(--au-text-2);
+    margin-bottom: 16px;
+  }
   @media (max-width: 900px) {
     .au-real-head { grid-template-columns: 1fr; gap: 32px; }
   }
