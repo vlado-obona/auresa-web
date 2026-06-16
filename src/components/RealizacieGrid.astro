@@ -1,0 +1,69 @@
+---
+/* Mriežka kariet realizácií. Použitá na /realizacie/ aj na podstránkach vertikál. */
+interface Item {
+  slug: string;
+  nazov: string;
+  lokalita: string;
+  rok: number;
+  status: string;
+  hlavna_foto: string;
+  vertikala: string;
+}
+interface Props { items: Item[]; }
+const { items } = Astro.props;
+const STATUS_LABEL: Record<string, string> = {
+  realizacia: 'Realizácia',
+  render: 'Render',
+  'v-procese': 'V procese',
+};
+---
+<div class="au-card-grid">
+  {items.map((r) => (
+    <a class="au-card" href={`/realizacie/${r.slug}/`} data-vertikala={r.vertikala}>
+      <figure class="au-card-media">
+        <img src={r.hlavna_foto} alt={`${r.nazov} — ${r.lokalita}`} loading="lazy" decoding="async" />
+        <span class="au-badge">{STATUS_LABEL[r.status] ?? r.status}</span>
+      </figure>
+      <div class="au-card-body">
+        <h3 class="au-card-title">{r.nazov}</h3>
+        <div class="au-label">{r.lokalita} · {r.rok}</div>
+      </div>
+    </a>
+  ))}
+</div>
+
+<style>
+  .au-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: calc(40px * var(--au-density));
+  }
+  .au-card { display: block; color: inherit; }
+  .au-card-media {
+    position: relative; overflow: hidden;
+    aspect-ratio: 4 / 3; background: var(--au-bg-2); margin-bottom: 16px;
+  }
+  .au-card-media img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.9s ease;
+  }
+  .au-card:hover .au-card-media img,
+  .au-card:focus-visible .au-card-media img { transform: scale(1.04); }
+  .au-badge {
+    position: absolute; top: 14px; left: 14px;
+    font-family: var(--sans); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    background: color-mix(in oklab, var(--au-bg) 88%, transparent);
+    color: var(--au-text); padding: 5px 10px;
+    backdrop-filter: blur(4px);
+  }
+  .au-card-title {
+    font-family: var(--serif); font-weight: 300; font-style: italic;
+    font-size: calc(26px * var(--au-fs)); letter-spacing: -0.01em; margin-bottom: 4px;
+  }
+  @media (max-width: 900px) {
+    .au-card-grid { grid-template-columns: 1fr 1fr; gap: 22px; }
+  }
+  @media (max-width: 560px) {
+    .au-card-grid { grid-template-columns: 1fr; }
+  }
+</style>

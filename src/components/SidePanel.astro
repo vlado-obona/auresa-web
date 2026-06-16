@@ -20,7 +20,13 @@ import { VERTS } from '../data/site';
       </dl>
       <div class="au-label" style="margin-bottom:12px">Referenčné realizácie</div>
       <ul class="au-panel-refs">
-        {v.panel.referencie.map((r) => <li>{r}</li>)}
+        {v.panel.referencie.map((r) => (
+          <li>
+            {r.slug
+              ? <a class="ulink" href={`/realizacie/${r.slug}/`}>{r.label}</a>
+              : r.label}
+          </li>
+        ))}
       </ul>
       <a href={`/${v.slug}/`} class="au-cta" style="margin-top:32px">Otvoriť plnú stránku <span class="arr">→</span></a>
     </div>

@@ -1,0 +1,27 @@
+---
+nazov: "Zubná klinika Piešťany"
+vertikala: "dental"
+lokalita: "Piešťany"
+rok: 2025
+status: "realizacia"
+hlavna_foto: "/images/realizacie/piestany/piestany_recepcia-hero.webp"
+galeria:
+  - "/images/realizacie/piestany/piestany_recepcia-hero.webp"
+  - "/images/realizacie/piestany/piestany_ambulancia-01.webp"
+  - "/images/realizacie/piestany/piestany_ambulancia-02.webp"
+  - "/images/realizacie/piestany/piestany_ambulancia-03.webp"
+  - "/images/realizacie/piestany/piestany_ambulancia-04.webp"
+  - "/images/realizacie/piestany/piestany_ambulancia-05.webp"
+  - "/images/realizacie/piestany/piestany_cakaren-01.webp"
+  - "/images/realizacie/piestany/piestany_cakaren-02.webp"
+  - "/images/realizacie/piestany/piestany_cakaren-03.webp"
+  - "/images/realizacie/piestany/piestany_lounge-01.webp"
+  - "/images/realizacie/piestany/piestany_lounge-02.webp"
+  - "/images/realizacie/piestany/piestany_pracovna.webp"
+  - "/images/realizacie/piestany/piestany_recepcia-01.webp"
+  - "/images/realizacie/piestany/piestany_recepcia-02.webp"
+  - "/images/realizacie/piestany/piestany_recepcia-03.webp"
+  - "/images/realizacie/piestany/piestany_recepcia-04.webp"
+  - "/images/realizacie/piestany/piestany_recepcia-05.webp"
+perex: "Svetlá klinika s mäkkými líniami a prírodnými materiálmi. Priestor, ktorý dýcha pokojom."
+---

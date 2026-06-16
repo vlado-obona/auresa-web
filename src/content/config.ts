@@ -4,7 +4,6 @@ const realizacie = defineCollection({
   type: 'content',
   schema: z.object({
     nazov: z.string(),
-    slug: z.string(),
     vertikala: z.enum(['dental', 'domy', 'kancelarie']),
     lokalita: z.string(),
     rok: z.number(),

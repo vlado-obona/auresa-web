@@ -1,32 +1,66 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Gallery from '../../components/Gallery.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
   const entries = await getCollection('realizacie');
-  return entries.map((entry) => ({
-    params: { slug: entry.data.slug },
-    props: { entry },
-  }));
+  return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
 }
 
 const { entry } = Astro.props;
-const { Content } = await entry.render();
-const title = `${entry.data.nazov} — Auresa Design Studio`;
+const d = entry.data;
+const STATUS_LABEL: Record<string, string> = { realizacia: 'Realizácia', render: 'Render', 'v-procese': 'V procese' };
+const title = `${d.nazov} — Auresa Design Studio`;
+// galéria bez hero (hero je vyššie ako veľký obrázok), ostatné do mriežky
+const galeriaImgs = (d.galeria ?? []) as string[];
 ---
-<BaseLayout title={title} description={entry.data.perex} ogImage={entry.data.hlavna_foto}>
-  <section class="au-page-hero">
-    <div class="d1-eyebrow"><span class="d1-eyebrow-title">Realizácia</span></div>
-    <h1>{entry.data.nazov}</h1>
-    <p>{entry.data.lokalita} · {entry.data.rok}</p>
+<BaseLayout title={title} description={d.perex} ogImage={d.hlavna_foto}>
+  <section class="au-real-hero">
+    <img src={d.hlavna_foto} alt={`${d.nazov} — ${d.lokalita}`} loading="eager" fetchpriority="high" decoding="async" />
   </section>
-  <div class="au-prose">
-    <p>{entry.data.perex}</p>
-    {entry.data.case_study && <p>{entry.data.case_study}</p>}
-    <Content />
-    <div class="au-stub-cta">
+
+  <article class="d1-section au-real-detail" style="border-top:0">
+    <div class="au-real-head">
+      <div>
+        <div class="d1-eyebrow"><span class="d1-eyebrow-title">{d.nazov}</span></div>
+        <p class="au-real-perex">{d.perex}</p>
+      </div>
+      <dl class="au-real-meta">
+        <div><dt class="au-label">Lokalita</dt><dd>{d.lokalita}</dd></div>
+        <div><dt class="au-label">Rok</dt><dd>{d.rok}</dd></div>
+        <div><dt class="au-label">Status</dt><dd>{STATUS_LABEL[d.status] ?? d.status}</dd></div>
+        <div><dt class="au-label">Vertikála</dt><dd>{d.vertikala === 'dental' ? 'Dentálna klinika' : 'Domy a byty'}</dd></div>
+      </dl>
+    </div>
+
+    <Gallery images={galeriaImgs} alt={d.nazov} />
+
+    <div class="au-stub-cta" style="margin-top:56px">
       <a href="/realizacie/" class="au-cta">Všetky realizácie <span class="arr">→</span></a>
       <a href="/#kontakt" class="au-cta">Napíšte nám <span class="arr">→</span></a>
     </div>
-  </div>
+  </article>
 </BaseLayout>
+
+<style>
+  .au-real-hero {
+    width: 100%; height: clamp(320px, 60vh, 680px); overflow: hidden; background: var(--au-bg-2);
+  }
+  .au-real-hero img { width: 100%; height: 100%; object-fit: cover; }
+  .au-real-head {
+    display: grid; grid-template-columns: 1.4fr 0.6fr; gap: calc(var(--gap) * 1.2);
+    align-items: start; margin-bottom: 56px;
+  }
+  .au-real-perex {
+    font-family: var(--serif); font-weight: 300; font-style: italic;
+    font-size: clamp(24px, 2.6vw, 34px); line-height: 1.35; color: var(--au-text-2);
+    max-width: 30ch;
+  }
+  .au-real-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 24px; }
+  .au-real-meta dt { margin-bottom: 4px; }
+  .au-real-meta dd { font-size: calc(15px * var(--au-fs)); }
+  @media (max-width: 900px) {
+    .au-real-head { grid-template-columns: 1fr; gap: 32px; }
+  }
+</style>

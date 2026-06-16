@@ -1,30 +1,55 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import RealizacieGrid from '../../components/RealizacieGrid.astro';
 import { getCollection } from 'astro:content';
 
-const realizacie = (await getCollection('realizacie')).sort(
-  (a, b) => (b.data.rok ?? 0) - (a.data.rok ?? 0)
-);
+const STATUS_ORDER: Record<string, number> = { realizacia: 0, render: 1, 'v-procese': 2 };
+const items = (await getCollection('realizacie'))
+  .map((e) => ({ ...e.data, slug: e.slug }))
+  .sort((a, b) => (b.rok - a.rok) || (STATUS_ORDER[a.status] - STATUS_ORDER[b.status]));
+
 const title = 'Realizácie — Auresa Design Studio';
-const description = 'Vybrané realizácie interiérového dizajnu — dentálne kliniky, domy a kancelárie. Auresa Design Studio, Prešov.';
+const description = 'Vybrané realizácie interiérového dizajnu — dentálne kliniky, rodinné domy a byty. Auresa Design Studio, Prešov.';
 ---
 <BaseLayout title={title} description={description}>
   <section class="au-page-hero">
     <div class="d1-eyebrow"><span class="d1-eyebrow-title">Realizácie</span></div>
     <h1>Vybrané <em>realizácie.</em></h1>
+    <p>Dentálne kliniky, domy a byty — priestory, ktoré dýchajú pokojom.</p>
   </section>
-  <div class="au-prose">
-    {realizacie.length === 0 ? (
-      <p><em>Galériu realizácií pripravujeme.</em> Pridáva sa cez CMS (<code>/admin/</code>). Medzitým si pozrite referencie pri jednotlivých vertikálach alebo nám napíšte.</p>
-    ) : (
-      <ul>
-        {realizacie.map((r) => (
-          <li><a href={`/realizacie/${r.data.slug}/`}>{r.data.nazov}</a> — {r.data.lokalita} · {r.data.rok}</li>
-        ))}
-      </ul>
-    )}
-    <div class="au-stub-cta">
-      <a href="/#kontakt" class="au-cta">Napíšte nám <span class="arr">→</span></a>
+
+  <div class="d1-section" style="border-top:0; padding-top:calc(var(--pad-y) * 0.5)">
+    <div class="au-filter" role="group" aria-label="Filter realizácií">
+      <button type="button" class="au-filter-btn is-active" data-filter="all">Všetko</button>
+      <button type="button" class="au-filter-btn" data-filter="dental">Dentálne kliniky</button>
+      <button type="button" class="au-filter-btn" data-filter="domy">Domy a byty</button>
     </div>
+    <RealizacieGrid items={items} />
   </div>
 </BaseLayout>
+
+<style>
+  .au-filter { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 48px; }
+  .au-filter-btn {
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 10px 18px; border: 1px solid var(--line-strong); color: var(--au-text-2);
+    background: transparent; cursor: pointer; transition: all 0.25s;
+  }
+  .au-filter-btn:hover { border-color: var(--au-text); color: var(--au-text); }
+  .au-filter-btn.is-active { background: var(--au-text); color: var(--au-bg); border-color: var(--au-text); }
+</style>
+
+<script>
+  const btns = document.querySelectorAll('.au-filter-btn');
+  const cards = document.querySelectorAll('.au-card[data-vertikala]');
+  btns.forEach((b) =>
+    b.addEventListener('click', () => {
+      const f = b.getAttribute('data-filter');
+      btns.forEach((x) => x.classList.toggle('is-active', x === b));
+      cards.forEach((c) => {
+        const show = f === 'all' || c.getAttribute('data-vertikala') === f;
+        (c as HTMLElement).style.display = show ? '' : 'none';
+      });
+    })
+  );
+</script>

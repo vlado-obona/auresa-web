@@ -49,7 +49,12 @@ export const VERTS = [
       body: 'Keď pacient prekročí prah ambulancie, prvý dojem vzniká ešte pred samotným ošetrením. Citlivo navrhnutý interiér zmierňuje stres, podporuje pocit istoty a vytvára prostredie, v ktorom sa pacient cíti prijatý. Dizajn sa tak stáva nenápadnou, no dôležitou súčasťou kvalitnej zdravotnej starostlivosti.',
       klient: 'Stomatológ-majiteľ',
       cyklus: '3–9 mesiacov',
-      referencie: ['Ideal Smile · Vranov', 'GlamiDent · Prešov', 'Novum · Prešov', 'ArtSmile · Prešov'],
+      referencie: [
+        { label: 'Ideal Smile · Vranov', slug: 'ideal-smile' },
+        { label: 'GlamiDent · Prešov', slug: 'glamident' },
+        { label: 'Novum · Prešov', slug: null },
+        { label: 'ArtSmile · Prešov', slug: 'artsmile' },
+      ],
     },
   },
   {
@@ -65,7 +70,12 @@ export const VERTS = [
       body: 'Domov je miestom každodenného života, oddychu aj spoločných chvíľ. Citlivo navrhnutý interiér prepája estetiku s každodennou funkčnosťou a vytvára prostredie, v ktorom sa prirodzene žije, odpočíva aj stretáva. Výsledkom nie je len krásny priestor, ale domov, ktorý podporuje kvalitu života v každom detaile.',
       klient: 'Pár / rodina 30–50 r.',
       cyklus: '1–6 mesiacov',
-      referencie: ['Rodinný dom Mokrance II · Realizácia', 'Rodinný dom Šidlovec · V procese', 'Rodinný dom Torysa · Render', 'Pánsky byt Zvolen · Render'],
+      referencie: [
+        { label: 'Rodinný dom Mokrance II · Realizácia', slug: 'mokrance-ii' },
+        { label: 'Rodinný dom Šidlovec · V procese', slug: null },
+        { label: 'Rodinný dom Torysa · Render', slug: 'torysa' },
+        { label: 'Pánsky byt Zvolen · Render', slug: 'zvolen' },
+      ],
     },
   },
   {
@@ -81,7 +91,9 @@ export const VERTS = [
       body: 'Kancelária už nie je len adresa, kam sa ráno presúvate. Je to to, čo zamestnanca pritiahne, ale aj to, čo udrží jeho sústredenie v prvých minútach týždňa.',
       klient: 'Founder / HR-driven firma',
       cyklus: '2–8 mesiacov',
-      referencie: ['Budovateľská · Prešov'],
+      referencie: [
+        { label: 'Budovateľská · Prešov', slug: null },
+      ],
     },
   },
 ] as const;

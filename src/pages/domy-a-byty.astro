@@ -1,7 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import RealizacieGrid from '../components/RealizacieGrid.astro';
+import { getCollection } from 'astro:content';
 const title = 'Domy a byty — Auresa Design Studio';
 const description = 'Interiérový dizajn pre rodinné domy a byty. Priestor, ktorý odráža váš život a prináša pokoj.';
+const realizacie = (await getCollection('realizacie'))
+  .map((e) => ({ ...e.data, slug: e.slug }))
+  .filter((d) => d.vertikala === 'domy')
+  .sort((a, b) => b.rok - a.rok);
 ---
 <BaseLayout title={title} description={description}>
   <section class="au-page-hero">
@@ -11,10 +17,14 @@ const description = 'Interiérový dizajn pre rodinné domy a byty. Priestor, kt
   </section>
   <div class="au-prose">
     <p>Domov je miestom každodenného života, oddychu aj spoločných chvíľ. Citlivo navrhnutý interiér prepája estetiku s každodennou funkčnosťou a vytvára prostredie, v ktorom sa prirodzene žije, odpočíva aj stretáva. Výsledkom nie je len krásny priestor, ale domov, ktorý podporuje kvalitu života v každom detaile.</p>
-    <p><em>Plný obsah tejto stránky pripravujeme.</em> Medzitým nám napíšte — radi sa s vami pozhovárame o vašom priestore.</p>
-    <div class="au-stub-cta">
-      <a href="/#kontakt" class="au-cta">Napíšte nám <span class="arr">→</span></a>
-      <a href="/" class="au-cta">Späť na úvod <span class="arr">→</span></a>
-    </div>
   </div>
+
+  <section class="d1-section">
+    <div class="d1-eyebrow"><span class="d1-eyebrow-title">Realizácie</span></div>
+    <RealizacieGrid items={realizacie} />
+    <div class="au-stub-cta" style="margin-top:48px">
+      <a href="/#kontakt" class="au-cta">Napíšte nám <span class="arr">→</span></a>
+      <a href="/realizacie/" class="au-cta">Všetky realizácie <span class="arr">→</span></a>
+    </div>
+  </section>
 </BaseLayout>
