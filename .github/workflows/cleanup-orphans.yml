@@ -20,32 +20,35 @@ jobs:
           SFTP_PATH: ${{ secrets.SFTP_PATH }}
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq lftp
-          lftp -u "$SFTP_USER" --env-password "sftp://$SFTP_HOST:$SFTP_PORT" -e "
-          set sftp:auto-confirm yes;
-          cd \"$SFTP_PATH\";
-          rm -f images/realizacie/glamident/glamident_ambulancia-17.webp;
-          rm -f images/realizacie/glamident/glamident_cakaren-12.webp;
-          rm -f images/realizacie/ideal-smile/ideal-smile_logo-stena-02.webp;
-          rm -f images/realizacie/torysa/torysa_kuchyna-jedalen-04.webp;
-          rm -f images/realizacie/torysa/torysa_kuchyna-jedalen-05.webp;
-          rm -f images/realizacie/torysa/torysa_obyvacka-04.webp;
-          rm -f images/realizacie/torysa/torysa_obyvacka-05.webp;
-          rm -f images/realizacie/torysa/torysa_chodba-02.webp;
-          rm -f images/realizacie/torysa/torysa_spalna-02.webp;
-          rm -f images/realizacie/zupcany/zupcany_ambulancia-02.webp;
-          rm -f images/realizacie/zupcany/zupcany_ambulancia-04.webp;
-          rm -f images/realizacie/zupcany/zupcany_ambulancia-07.webp;
-          rm -f images/realizacie/zupcany/zupcany_ambulancia-09.webp;
-          rm -f images/realizacie/zupcany/zupcany_cakaren-02.webp;
-          rm -f images/realizacie/zupcany/zupcany_cakaren-04.webp;
-          rm -f images/realizacie/zupcany/zupcany_cakaren-06.webp;
-          rm -f images/realizacie/zupcany/zupcany_chodba-02.webp;
-          rm -f images/realizacie/zupcany/zupcany_kuchynka-02.webp;
-          rm -f images/realizacie/zupcany/zupcany_kuchynka-04.webp;
-          rm -f images/realizacie/zupcany/zupcany_kuchynka-06.webp;
-          rm -f images/realizacie/zupcany/zupcany_pracovna-02.webp;
-          rm -f images/realizacie/zupcany/zupcany_pracovna-04.webp;
-          rm -f images/realizacie/zupcany/zupcany_recepcia-01.webp;
-          rm -f images/realizacie/zupcany/zupcany_wc-02.webp;
-          bye"
+          FILES="
+          images/realizacie/glamident/glamident_ambulancia-17.webp
+          images/realizacie/glamident/glamident_cakaren-12.webp
+          images/realizacie/ideal-smile/ideal-smile_logo-stena-02.webp
+          images/realizacie/torysa/torysa_kuchyna-jedalen-04.webp
+          images/realizacie/torysa/torysa_kuchyna-jedalen-05.webp
+          images/realizacie/torysa/torysa_obyvacka-04.webp
+          images/realizacie/torysa/torysa_obyvacka-05.webp
+          images/realizacie/torysa/torysa_chodba-02.webp
+          images/realizacie/torysa/torysa_spalna-02.webp
+          images/realizacie/zupcany/zupcany_ambulancia-02.webp
+          images/realizacie/zupcany/zupcany_ambulancia-04.webp
+          images/realizacie/zupcany/zupcany_ambulancia-07.webp
+          images/realizacie/zupcany/zupcany_ambulancia-09.webp
+          images/realizacie/zupcany/zupcany_cakaren-02.webp
+          images/realizacie/zupcany/zupcany_cakaren-04.webp
+          images/realizacie/zupcany/zupcany_cakaren-06.webp
+          images/realizacie/zupcany/zupcany_chodba-02.webp
+          images/realizacie/zupcany/zupcany_kuchynka-02.webp
+          images/realizacie/zupcany/zupcany_kuchynka-04.webp
+          images/realizacie/zupcany/zupcany_kuchynka-06.webp
+          images/realizacie/zupcany/zupcany_pracovna-02.webp
+          images/realizacie/zupcany/zupcany_pracovna-04.webp
+          images/realizacie/zupcany/zupcany_recepcia-01.webp
+          images/realizacie/zupcany/zupcany_wc-02.webp
+          "
+          CMD="set sftp:auto-confirm yes; cd $SFTP_PATH;"
+          for f in $FILES; do CMD="$CMD rm -f $f;"; done
+          CMD="$CMD bye"
+          echo "Spúšťam lftp cleanup…"
+          lftp -u "$SFTP_USER" --env-password "sftp://$SFTP_HOST:$SFTP_PORT" -e "$CMD"
           echo "Cleanup hotový."
