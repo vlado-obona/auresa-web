@@ -346,10 +346,17 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 @media (max-width: 900px) {
   .au.d1 { --pad-x: 24px; --pad-y: 64px; --gap: 28px; }
   .au-nav__links {
-    position: fixed; inset: 0 0 0 auto; width: min(320px, 86vw); flex-direction: column;
-    justify-content: center; align-items: flex-start; gap: 24px; padding: 80px 32px;
+    /* plnoplošný overlay (nie pravý drawer) — plne prekryje stránku */
+    position: fixed; inset: 0; width: auto;
+    height: 100vh; height: 100dvh;            /* iOS-safe dynamická výška */
+    flex-direction: column;
+    justify-content: flex-start;              /* položky zhora — prvá vždy viditeľná */
+    align-items: flex-start; gap: 24px;
+    /* zhora odsadiť pod hlavičku + safe-area (notch/Dynamic Island) */
+    padding: calc(env(safe-area-inset-top, 0px) + 96px) 32px calc(env(safe-area-inset-bottom, 0px) + 32px);
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
     background: var(--bone); transform: translateX(102%); transition: transform 0.4s cubic-bezier(.2,.7,.2,1);
-    font-size: 18px; z-index: 70;
+    font-size: 20px; z-index: 70;
   }
   .au-nav.open .au-nav__links { transform: translateX(0); }
   .au-nav__toggle { display: inline-flex; z-index: 80; }
