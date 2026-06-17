@@ -23,10 +23,7 @@ const galeriaImgs = (d.galeria ?? []) as string[];
 
   <article class="d1-section au-real-detail" style="border-top:0">
     <div class="au-real-head">
-      <div>
-        <div class="d1-eyebrow"><span class="d1-eyebrow-title">{d.nazov}</span></div>
-        <p class="au-real-perex">{d.perex}</p>
-      </div>
+      <div class="d1-eyebrow"><span class="d1-eyebrow-title">{d.nazov}</span></div>
       <dl class="au-real-meta">
         <div><dt class="au-label">Lokalita</dt><dd>{d.lokalita}</dd></div>
         <div><dt class="au-label">Rok</dt><dd>{d.rok}</dd></div>
@@ -55,19 +52,17 @@ const galeriaImgs = (d.galeria ?? []) as string[];
     display: grid; grid-template-columns: 1.4fr 0.6fr; gap: calc(var(--gap) * 1.2);
     align-items: start; margin-bottom: 56px;
   }
-  .au-real-perex {
-    font-family: var(--serif); font-weight: 300; font-style: italic;
-    font-size: clamp(24px, 2.6vw, 34px); line-height: 1.35; color: var(--au-text-2);
-    max-width: 30ch;
-  }
   .au-real-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 24px; }
   .au-real-meta dt { margin-bottom: 4px; }
   .au-real-meta dd { font-size: calc(15px * var(--au-fs)); }
-  .au-real-popis { max-width: 64ch; margin-bottom: 56px; }
+  /* plný popis v perexovom štýle (Cormorant kurzíva, väčší) — jeden text, bez zdvojenia */
+  .au-real-popis { max-width: 42ch; margin-bottom: 56px; }
   .au-real-popis :global(p) {
-    font-size: calc(18px * var(--au-fs)); line-height: 1.75; color: var(--au-text-2);
-    margin-bottom: 16px;
+    font-family: var(--serif); font-weight: 300; font-style: italic;
+    font-size: clamp(24px, 2.6vw, 34px); line-height: 1.35; color: var(--au-text-2);
+    margin-bottom: 24px;
   }
+  .au-real-popis :global(p:last-child) { margin-bottom: 0; }
   @media (max-width: 900px) {
     .au-real-head { grid-template-columns: 1fr; gap: 32px; }
   }
