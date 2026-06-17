@@ -1,0 +1,44 @@
+name: Cleanup files (SFTP)
+
+# Manuálne (workflow_dispatch) zmazanie konkrétnych súborov zo servera.
+# Deploy (lftp mirror) je aditívny — nemaže súbory zmazané z repa. Tento
+# workflow ich cielene odstráni zo servera. Zadaj cesty relatívne k webrootu
+# (oddelené medzerou alebo novými riadkami).
+# Použitie: gh workflow run "Cleanup files (SFTP)" -f files="images/realizacie/x/a.webp images/realizacie/x/b.webp"
+on:
+  workflow_dispatch:
+    inputs:
+      files:
+        description: 'Cesty relatívne k webrootu (medzera/nový riadok), napr. images/realizacie/ideal-smile/ideal-smile_recepcia-01.webp'
+        required: true
+        type: string
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove files via SFTP
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          LFTP_PASSWORD: ${{ secrets.SFTP_PASS }}
+          SFTP_PATH: ${{ secrets.SFTP_PATH }}
+          FILES_INPUT: ${{ inputs.files }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+          CMD="set sftp:auto-confirm yes; cd $SFTP_PATH;"
+          n=0
+          for f in $FILES_INPUT; do
+            # bezpečnostná poistka: žiadne absolútne cesty ani ../
+            case "$f" in
+              /*|*..*) echo "Preskakujem nebezpečnú cestu: $f"; continue;;
+            esac
+            CMD="$CMD rm -f $f;"
+            n=$((n+1))
+            echo "  rm $f"
+          done
+          CMD="$CMD bye"
+          echo "Mažem $n súborov…"
+          lftp -u "$SFTP_USER" --env-password "sftp://$SFTP_HOST:$SFTP_PORT" -e "$CMD"
+          echo "Hotovo."
