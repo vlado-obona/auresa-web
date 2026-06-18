@@ -1,0 +1,58 @@
+---
+/* Home staging — teaser PÁS na homepage (pod 3 kartami, nad O autorke).
+   Zámerný kontrast voči tmavým foto-kartám: svetlé bone pozadie = „iná vrstva". */
+---
+<section class="au-hs-teaser" id="home-staging-teaser">
+  <div class="au-hs-grid">
+    <div class="au-hs-text">
+      <div class="au-label au-hs-label">Home staging pre realitné kancelárie</div>
+      <p class="au-hs-headline">Predaj nehnuteľnosti nie je len o metroch štvorcových a lokalite. Je aj o prvom dojme.</p>
+      <p class="au-hs-lead">Pomáhame realitným kanceláriám aj majiteľom zvýrazniť potenciál nehnuteľnosti a odprezentovať ju v čo najlepšom svetle.</p>
+      <a class="au-hs-cta" href="/home-staging/">Zistiť viac <span class="arr">→</span></a>
+    </div>
+    <figure class="au-hs-media">
+      <img src="/images/homestaging_kolaz.webp" alt="Home staging — príprava priestoru pred predajom" loading="lazy" decoding="async" />
+    </figure>
+  </div>
+</section>
+
+<style>
+  .au-hs-teaser {
+    background: var(--bone);
+    color: var(--ink);
+    padding: calc(var(--pad-y) * 0.85) var(--pad-x);
+    border-top: 1px solid var(--line);
+  }
+  .au-hs-grid {
+    display: grid;
+    grid-template-columns: 2fr 3fr;   /* ~40% text / ~60% koláž */
+    gap: clamp(28px, 4vw, 64px);
+    align-items: center;
+    max-width: 1300px;
+  }
+  .au-hs-label { color: var(--taupe); margin-bottom: 20px; }
+  .au-hs-headline {
+    font-family: var(--serif); font-weight: 300; font-style: italic;
+    font-size: clamp(26px, 2.8vw, 38px); line-height: 1.25; letter-spacing: -0.015em;
+    color: var(--ink); margin-bottom: 20px;
+  }
+  .au-hs-lead {
+    font-family: var(--sans);
+    font-size: calc(16px * var(--au-fs)); line-height: 1.7; color: var(--ink-soft);
+    max-width: 42ch; margin-bottom: 24px;
+  }
+  .au-hs-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--sans); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--olive); padding-bottom: 4px; border-bottom: 1px solid currentColor;
+  }
+  .au-hs-cta .arr { display: inline-block; transition: transform 0.3s; }
+  .au-hs-cta:hover .arr { transform: translateX(6px); }
+  .au-hs-media { overflow: hidden; }
+  /* finálna koláž (3 fotky) — zobraziť celú, bez orezania a bez deformácie */
+  .au-hs-media img { width: 100%; height: auto; display: block; }
+
+  @media (max-width: 900px) {
+    .au-hs-grid { grid-template-columns: 1fr; gap: 28px; }   /* mobil: text, potom koláž */
+  }
+</style>

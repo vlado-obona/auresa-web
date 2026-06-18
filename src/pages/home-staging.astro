@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const title = 'Home staging pre realitné kancelárie | Auresa';
+const description = 'Príprava bytov, domov a komerčných priestorov pred predajom alebo prenájmom. Pomáhame ukázať potenciál nehnuteľnosti a odprezentovať ju v najlepšom svetle.';
+---
+<BaseLayout title={title} description={description} ogImage="/images/homestaging_kolaz.webp">
+  <section class="au-page-hero">
+    <div class="au-label au-hs-hero-label">Home staging pre realitné kancelárie</div>
+    <h1>Home staging pre realitné kancelárie</h1>
+  </section>
+
+  <figure class="au-hs-hero-media">
+    <img src="/images/homestaging_kolaz.webp" alt="Home staging — príprava priestoru pred predajom" loading="eager" fetchpriority="high" decoding="async" />
+  </figure>
+
+  <article class="au-prose">
+    <p>Predaj nehnuteľnosti nie je len o metroch štvorcových a lokalite. Je aj o prvom dojme. Práve ten často rozhoduje, či si záujemca vie v priestore predstaviť svoj budúci domov.</p>
+    <p>Ponúkame prípravu bytov, domov a komerčných priestorov pred predajom alebo prenájmom tak, aby pôsobili atraktívne, upravene a vizuálne zrozumiteľne. Pomáhame realitným kanceláriám aj majiteľom zvýrazniť potenciál nehnuteľnosti a odprezentovať ju v čo najlepšom svetle.</p>
+    <p>Home staging zahŕňa úpravu dispozície, výber doplnkov, doladenie farieb, osvetlenia, textílií a detailov, ktoré vytvoria príjemnú atmosféru. Cieľom nie je priestor úplne prerobiť, ale ukázať jeho možnosti tak, aby oslovil čo najviac záujemcov.</p>
+    <p>V prípade prázdnych alebo ťažšie predstaviteľných priestorov vieme pripraviť aj návrh zariadenia, vizualizáciu alebo odporúčania, ktoré pomôžu kupujúcemu lepšie pochopiť potenciál nehnuteľnosti.</p>
+
+    <p>Čo vieme zabezpečiť:</p>
+    <ul>
+      <li>konzultáciu priamo v nehnuteľnosti,</li>
+      <li>návrh úprav pred fotením alebo obhliadkami,</li>
+      <li>doladenie nábytku, dekorácií a osvetlenia,</li>
+      <li>prípravu priestoru na profesionálne fotenie,</li>
+      <li>vizuálny návrh zariadenia prázdnych miestností,</li>
+      <li>odporúčania na rýchle a efektívne zmeny s rozumným rozpočtom.</li>
+    </ul>
+
+    <p>Dobre pripravená nehnuteľnosť pôsobí hodnotnejšie, predáva sa ľahšie a záujemcovia si ju dokážu lepšie zapamätať. Home staging je malý krok v príprave, ktorý môže výrazne ovplyvniť celkový výsledok predaja.</p>
+
+    <p class="au-hs-emphasis"><em>Pomôžeme vám ukázať nehnuteľnosť tak, aby zaujala už na prvý pohľad.</em></p>
+
+    <div class="au-stub-cta">
+      <a href="/#kontakt" class="au-cta">Napíšte nám <span class="arr">→</span></a>
+      <a href="/" class="au-cta">Späť na úvod <span class="arr">→</span></a>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .au-hs-hero-label { margin-bottom: 18px; }
+  .au-hs-hero-media { width: 100%; max-width: var(--container); margin-inline: auto; padding: 0 var(--pad-x); }
+  /* finálna koláž — zobraziť celú, bez orezania a deformácie */
+  .au-hs-hero-media img { width: 100%; height: auto; display: block; }
+  .au-hs-emphasis {
+    font-family: var(--serif) !important; font-style: italic; font-weight: 300;
+    font-size: clamp(24px, 2.6vw, 32px) !important; line-height: 1.35;
+    color: var(--au-text) !important; margin: 36px 0 8px;
+  }
+</style>
