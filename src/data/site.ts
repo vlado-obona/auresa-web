@@ -63,7 +63,7 @@ export const VERTS = [
     title: 'Domy a byty',
     slug: 'domy-a-byty',
     cardQuote: 'Priestor, ktorý odráža váš život. Domov, ktorý prináša pokoj.',
-    cardPhoto: null,
+    cardPhoto: '/images/mokrance-ii_obyvacka-krb.webp',
     panel: {
       label: 'Vertikála II · Domy',
       perex: 'Priestor, ktorý odráža váš život. Domov, ktorý prináša pokoj.',
@@ -84,7 +84,7 @@ export const VERTS = [
     title: 'Kancelárie',
     slug: 'kancelarie',
     cardQuote: 'Priestor ako tichý náborový nástroj.',
-    cardPhoto: null,
+    cardPhoto: '/images/budovatelska_zasadacka-hero.webp',
     panel: {
       label: 'Vertikála III · Kanc',
       perex: 'Priestor ako tichý náborový nástroj.',
