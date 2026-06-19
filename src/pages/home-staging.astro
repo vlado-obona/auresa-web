@@ -1,7 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Gallery from '../components/Gallery.astro';
 const title = 'Home staging pre realitné kancelárie | Auresa';
 const description = 'Príprava bytov, domov a komerčných priestorov pred predajom alebo prenájmom. Pomáhame ukázať potenciál nehnuteľnosti a odprezentovať ju v najlepšom svetle.';
+/* Galéria — vizuály home stagingu (koláž ostáva hero, nie je v galérii). */
+const galeria = [
+  '/images/homestaging_obyvacka-hero.webp',
+  '/images/homestaging_obyvacka-01.webp',
+  '/images/homestaging_obyvacka-02.webp',
+  '/images/homestaging_spalna-detail.webp',
+];
 ---
 <BaseLayout title={title} description={description} ogImage="/images/homestaging_kolaz.webp">
   <section class="au-page-hero">
@@ -32,12 +40,16 @@ const description = 'Príprava bytov, domov a komerčných priestorov pred preda
     <p>Dobre pripravená nehnuteľnosť pôsobí hodnotnejšie, predáva sa ľahšie a záujemcovia si ju dokážu lepšie zapamätať. Home staging je malý krok v príprave, ktorý môže výrazne ovplyvniť celkový výsledok predaja.</p>
 
     <p class="au-hs-emphasis"><em>Pomôžeme vám ukázať nehnuteľnosť tak, aby zaujala už na prvý pohľad.</em></p>
+  </article>
 
-    <div class="au-stub-cta">
+  <section class="d1-section">
+    <div class="d1-eyebrow"><span class="d1-eyebrow-title">Galéria</span></div>
+    <Gallery images={galeria} alt="Home staging — pripravený priestor" />
+    <div class="au-stub-cta" style="margin-top:56px">
       <a href="/#kontakt" class="au-cta">Napíšte nám <span class="arr">→</span></a>
       <a href="/" class="au-cta">Späť na úvod <span class="arr">→</span></a>
     </div>
-  </article>
+  </section>
 </BaseLayout>
 
 <style>
