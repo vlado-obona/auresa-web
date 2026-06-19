@@ -214,10 +214,17 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 .d1-door--photo { background: var(--ink); }
 .d1-door-img { position: absolute; inset: 0; }
 .d1-door-img img {
-  width: 100%; height: 100%; object-fit: cover;
-  transition: transform 0.9s ease, filter 0.6s ease; filter: brightness(0.62) saturate(0.92);
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+  /* jednotná normalizácia expozície/sýtosti pre všetky 3 karty */
+  transition: transform 0.9s ease, filter 0.6s ease;
+  filter: saturate(0.88) brightness(0.97) contrast(1.03);
 }
-.d1-door:hover .d1-door-img img, .d1-door:focus-visible .d1-door-img img { transform: scale(1.05); filter: brightness(0.82) saturate(0.98); }
+/* jemný teplý ink nádych — zjednotí teplotu (najmä chladnú Budovateľskú) */
+.d1-door-img::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: rgba(58, 46, 36, 0.10); mix-blend-mode: multiply;
+}
+.d1-door:hover .d1-door-img img, .d1-door:focus-visible .d1-door-img img { transform: scale(1.05); filter: saturate(0.95) brightness(1.02) contrast(1.02); }
 /* placeholder door (bone bg, no photo) */
 .d1-door--ph .d1-door-overlay { background: linear-gradient(to top, rgba(58,46,36,0.10) 0%, transparent 60%); }
 .d1-door--ph .d1-door-num, .d1-door--ph h3, .d1-door--ph .d1-door-pull, .d1-door--ph .d1-door-cta { color: var(--ink); }
@@ -226,7 +233,7 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 .d1-door-overlay {
   position: absolute; inset: 0; z-index: 2; padding: 28px 30px 36px; color: var(--bone);
   display: flex; flex-direction: column;
-  background: linear-gradient(to top, rgba(58,46,36,0.88) 0%, rgba(58,46,36,0.32) 50%, transparent 78%);
+  background: linear-gradient(to top, rgba(58,46,36,0.55) 0%, rgba(58,46,36,0.18) 45%, rgba(58,46,36,0.06) 100%);
 }
 .d1-door-num { letter-spacing: 0.28em; color: rgba(236,230,220,0.92); }
 .d1-door-foot { margin-top: auto; }
