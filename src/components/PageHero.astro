@@ -1,7 +1,7 @@
 ---
-/* PageHero — zdieľaný hero podstránok vertikál: TEXT VĽAVO, zatmavená FOTO VPRAVO.
-   Na mobile stack (text, potom foto). Texty (h1/sub/lead) idú cez <slot> z rodiča —
-   typografiu .au-subhero-* rieši global.css (slot obsah nededí scoped štýly). */
+/* PageHero — zdieľaný hero podstránok vertikál: FOTO ako POZADIE celej sekcie
+   + bone „závoj" s prechodom priehľadnosti (desktop zľava→doprava, mobil zhora→nadol).
+   Text (vľavo) je nad závojom. Typografiu .au-subhero-* rieši global.css (slot z rodiča). */
 interface Props {
   eyebrow: string;
   photo: string;
@@ -10,11 +10,10 @@ interface Props {
 const { eyebrow, photo, alt } = Astro.props;
 ---
 <section class="au-subhero">
+  <img class="au-subhero-bg" src={photo} alt={alt} loading="eager" fetchpriority="high" decoding="async" />
+  <div class="au-subhero-veil" aria-hidden="true"></div>
   <div class="au-subhero-text">
     <div class="d1-eyebrow"><span class="d1-eyebrow-title">{eyebrow}</span></div>
     <slot />
   </div>
-  <figure class="au-subhero-media">
-    <img src={photo} alt={alt} loading="eager" fetchpriority="high" decoding="async" />
-  </figure>
 </section>

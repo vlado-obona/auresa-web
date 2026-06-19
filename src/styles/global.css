@@ -346,14 +346,28 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--au-accent); out
 .au-page-hero h1 em { font-style: italic; color: var(--au-accent); }
 .au-page-hero p { font-family: var(--serif); font-style: italic; font-size: clamp(20px, 2.2vw, 28px); color: var(--au-text-2); margin-top: 20px; max-width: 40ch; }
 
-/* Podstránky vertikál — zdieľaný hero (PageHero): text vľavo, zatmavená foto vpravo */
+/* Podstránky vertikál — zdieľaný hero (PageHero): FOTO ako pozadie + bone závoj */
 .au-subhero {
-  display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 64px);
-  align-items: center;
+  position: relative; overflow: hidden;
+  min-height: clamp(420px, 56vh, 620px);
+  display: flex; align-items: center;
   padding: calc(var(--pad-y) * 0.9) var(--pad-x);
   background: var(--bone); border-bottom: 1px solid var(--line);
 }
-.au-subhero-text { max-width: 48ch; }
+.au-subhero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; object-fit: cover;
+}
+/* bone závoj: vľavo takmer plný (text čitateľný) → vpravo fotka odkrytá */
+.au-subhero-veil {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(to right,
+    rgba(236,230,220,0.96) 0%,
+    rgba(236,230,220,0.90) 28%,
+    rgba(236,230,220,0.45) 65%,
+    rgba(236,230,220,0.08) 100%);
+}
+.au-subhero-text { position: relative; z-index: 2; max-width: 55%; }
 .au-subhero-text .d1-eyebrow { margin-bottom: 24px; }
 /* H1 jasne dominuje nad popisom */
 .au-subhero-h1 {
@@ -368,23 +382,19 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--au-accent); out
 }
 .au-subhero-lead {
   font-family: var(--sans); font-size: calc(15px * var(--au-fs)); line-height: 1.7;
-  color: var(--ink-soft); margin-top: 24px; max-width: 46ch;
+  color: var(--ink-soft); margin-top: 24px; max-width: 42ch;
 }
-.au-subhero-media {
-  position: relative; overflow: hidden; margin: 0;
-  aspect-ratio: 4 / 3; max-height: 520px;
-}
-.au-subhero-media img {
-  width: 100%; height: 100%; object-fit: cover;
-  filter: brightness(0.82) saturate(0.96);   /* zatmavená, v duchu webu */
-}
-.au-subhero-media::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: rgba(58, 46, 36, 0.22);          /* jemný ink overlay */
-}
+/* mobil: čitateľnosť > efekt — text hore na takmer plnom bone, fotka jemne presvitá dole */
 @media (max-width: 900px) {
-  .au-subhero { grid-template-columns: 1fr; gap: 28px; }   /* mobil: text, potom foto */
-  .au-subhero-media { aspect-ratio: 16 / 10; max-height: 360px; }
+  .au-subhero { align-items: flex-start; min-height: clamp(420px, 74vh, 580px); }
+  .au-subhero-text { max-width: 100%; }
+  .au-subhero-veil {
+    background: linear-gradient(to bottom,
+      rgba(236,230,220,0.97) 0%,
+      rgba(236,230,220,0.93) 36%,
+      rgba(236,230,220,0.66) 68%,
+      rgba(236,230,220,0.32) 100%);
+  }
 }
 .au-prose { max-width: 760px; margin-inline: auto; padding: var(--pad-y) var(--pad-x); }
 .au-prose h1 { font-family: var(--serif); font-weight: 300; font-size: clamp(36px, 5vw, 60px); letter-spacing: -0.02em; margin-bottom: 32px; }
