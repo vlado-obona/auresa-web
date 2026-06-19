@@ -343,6 +343,47 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 .au-page-hero h1 { font-family: var(--serif); font-weight: 300; font-size: clamp(40px, 6vw, 80px); line-height: 1; letter-spacing: -0.025em; max-width: 18ch; }
 .au-page-hero h1 em { font-style: italic; color: var(--au-accent); }
 .au-page-hero p { font-family: var(--serif); font-style: italic; font-size: clamp(20px, 2.2vw, 28px); color: var(--au-text-2); margin-top: 20px; max-width: 40ch; }
+
+/* Podstránky vertikál — zdieľaný hero (PageHero): text vľavo, zatmavená foto vpravo */
+.au-subhero {
+  display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 64px);
+  align-items: center;
+  padding: calc(var(--pad-y) * 0.9) var(--pad-x);
+  background: var(--bone); border-bottom: 1px solid var(--line);
+}
+.au-subhero-text { max-width: 48ch; }
+.au-subhero-text .d1-eyebrow { margin-bottom: 24px; }
+/* H1 jasne dominuje nad popisom */
+.au-subhero-h1 {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(46px, 6.4vw, 88px); line-height: 1; letter-spacing: -0.025em; margin: 0;
+}
+.au-subhero-h1 em { font-style: italic; color: var(--au-accent); }
+.au-subhero-sub {
+  font-family: var(--serif); font-style: italic;
+  font-size: clamp(20px, 2.2vw, 28px); color: var(--au-text-2);
+  margin-top: 20px; max-width: 40ch;
+}
+.au-subhero-lead {
+  font-family: var(--sans); font-size: calc(15px * var(--au-fs)); line-height: 1.7;
+  color: var(--ink-soft); margin-top: 24px; max-width: 46ch;
+}
+.au-subhero-media {
+  position: relative; overflow: hidden; margin: 0;
+  aspect-ratio: 4 / 3; max-height: 520px;
+}
+.au-subhero-media img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(0.82) saturate(0.96);   /* zatmavená, v duchu webu */
+}
+.au-subhero-media::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: rgba(58, 46, 36, 0.22);          /* jemný ink overlay */
+}
+@media (max-width: 900px) {
+  .au-subhero { grid-template-columns: 1fr; gap: 28px; }   /* mobil: text, potom foto */
+  .au-subhero-media { aspect-ratio: 16 / 10; max-height: 360px; }
+}
 .au-prose { max-width: 760px; margin-inline: auto; padding: var(--pad-y) var(--pad-x); }
 .au-prose h1 { font-family: var(--serif); font-weight: 300; font-size: clamp(36px, 5vw, 60px); letter-spacing: -0.02em; margin-bottom: 32px; }
 .au-prose h2 { font-family: var(--serif); font-weight: 400; font-size: calc(28px * var(--au-fs)); margin: 40px 0 14px; letter-spacing: -0.01em; }

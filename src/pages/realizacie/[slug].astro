@@ -26,7 +26,10 @@ const galeriaImgs = (d.galeria ?? []) as string[];
       <div class="d1-eyebrow"><span class="d1-eyebrow-title">{d.nazov}</span></div>
       <dl class="au-real-meta">
         <div><dt class="au-label">Lokalita</dt><dd>{d.lokalita}</dd></div>
-        <div><dt class="au-label">Rok</dt><dd>{d.rok}</dd></div>
+        {d.klient && <div><dt class="au-label">Klient</dt><dd>{d.klient}</dd></div>}
+        {d.termin
+          ? <div><dt class="au-label">Termín</dt><dd>{d.termin}</dd></div>
+          : <div><dt class="au-label">Rok</dt><dd>{d.rok}</dd></div>}
         <div><dt class="au-label">Status</dt><dd>{STATUS_LABEL[d.status] ?? d.status}</dd></div>
         <div><dt class="au-label">Vertikála</dt><dd>{d.vertikala === 'dental' ? 'Dentálna klinika' : d.vertikala === 'kancelarie' ? 'Kancelárie' : 'Domy a byty'}</dd></div>
       </dl>

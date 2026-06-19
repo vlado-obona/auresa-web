@@ -4,6 +4,8 @@ vertikala: "kancelarie"
 lokalita: "Prešov"
 rok: 2026
 status: "render"
+klient: "Súkromný klient"
+termin: "Individuálny"
 hlavna_foto: "/images/realizacie/budovatelska/budovatelska_zasadacka-hero.webp"
 galeria:
   - "/images/realizacie/budovatelska/budovatelska_zasadacka-hero.webp"

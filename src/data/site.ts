@@ -52,7 +52,6 @@ export const VERTS = [
       referencie: [
         { label: 'Ideal Smile · Vranov', slug: 'ideal-smile' },
         { label: 'GlamiDent · Prešov', slug: 'glamident' },
-        { label: 'Novum · Prešov', slug: null },
         { label: 'ArtSmile · Prešov', slug: 'artsmile' },
       ],
     },
@@ -89,7 +88,7 @@ export const VERTS = [
       label: 'Vertikála III · Kanc',
       perex: 'Priestor ako tichý náborový nástroj.',
       body: 'Kancelária už nie je len adresa, kam sa ráno presúvate. Je to to, čo zamestnanca pritiahne, ale aj to, čo udrží jeho sústredenie v prvých minútach týždňa.',
-      klient: 'Founder / HR-driven firma',
+      klient: 'Súkromný klient',
       cyklus: '2–8 mesiacov',
       referencie: [
         { label: 'Budovateľská · Prešov', slug: null },

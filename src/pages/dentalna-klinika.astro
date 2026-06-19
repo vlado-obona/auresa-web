@@ -1,23 +1,21 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import RealizacieGrid from '../components/RealizacieGrid.astro';
+import PageHero from '../components/PageHero.astro';
 import { getCollection } from 'astro:content';
 const title = 'Interiérový dizajn dentálnej kliniky | Auresa Design Studio Prešov';
-const description = 'Navrhujeme interiéry zubných ambulancií a dentálnych kliník — čakárne, ošetrovne aj zázemie. Priestor, ktorý upokojuje pacienta a uľahčuje prácu tímu. GlamiDent, Ideal Smile, Novum, ArtSmile.';
+const description = 'Navrhujeme interiéry zubných ambulancií a dentálnych kliník — čakárne, ošetrovne aj zázemie. Priestor, ktorý upokojuje pacienta a uľahčuje prácu tímu. GlamiDent, Ideal Smile, ArtSmile.';
 const realizacie = (await getCollection('realizacie'))
   .map((e) => ({ ...e.data, slug: e.slug }))
   .filter((d) => d.vertikala === 'dental')
   .sort((a, b) => b.rok - a.rok);
 ---
 <BaseLayout title={title} description={description} ogImage="/images/glamident_treatment.webp">
-  <section class="au-page-hero">
-    <div class="d1-eyebrow"><span class="d1-eyebrow-title">Dentálna klinika</span></div>
-    <h1>Priestor, ktorý <em>upokojuje.</em></h1>
-    <p>Starostlivosť, ku ktorej sa pacienti vracajú.</p>
-  </section>
-  <div class="au-prose">
-    <p>Keď pacient prekročí prah ambulancie, prvý dojem vzniká ešte pred samotným ošetrením. Citlivo navrhnutý interiér zmierňuje stres, podporuje pocit istoty a vytvára prostredie, v ktorom sa pacient cíti prijatý. Dizajn sa tak stáva nenápadnou, no dôležitou súčasťou kvalitnej zdravotnej starostlivosti.</p>
-  </div>
+  <PageHero eyebrow="Dentálna klinika" photo="/images/glamident_treatment.webp" alt="Interiér dentálnej kliniky — ošetrovňa GlamiDent">
+    <h1 class="au-subhero-h1">Priestor, ktorý <em>upokojuje.</em></h1>
+    <p class="au-subhero-sub">Starostlivosť, ku ktorej sa pacienti vracajú.</p>
+    <p class="au-subhero-lead">Keď pacient prekročí prah ambulancie, prvý dojem vzniká ešte pred samotným ošetrením. Citlivo navrhnutý interiér zmierňuje stres, podporuje pocit istoty a vytvára prostredie, v ktorom sa pacient cíti prijatý. Dizajn sa tak stáva nenápadnou, no dôležitou súčasťou kvalitnej zdravotnej starostlivosti.</p>
+  </PageHero>
 
   <section class="d1-section">
     <div class="d1-eyebrow"><span class="d1-eyebrow-title">Realizácie</span></div>

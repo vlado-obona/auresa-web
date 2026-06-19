@@ -5,7 +5,7 @@
 <section class="au-hs-teaser" id="home-staging-teaser">
   <div class="au-hs-grid">
     <div class="au-hs-text">
-      <div class="au-label au-hs-label">Home staging pre realitné kancelárie</div>
+      <h2 class="au-hs-title">Home staging pre realitné kancelárie</h2>
       <p class="au-hs-headline">Predaj nehnuteľnosti nie je len o metroch štvorcových a lokalite. Je aj o prvom dojme.</p>
       <p class="au-hs-lead">Pomáhame realitným kanceláriám aj majiteľom zvýrazniť potenciál nehnuteľnosti a odprezentovať ju v čo najlepšom svetle.</p>
       <a class="au-hs-cta" href="/home-staging/">Zistiť viac <span class="arr">→</span></a>
@@ -30,7 +30,12 @@
     align-items: center;
     max-width: 1300px;
   }
-  .au-hs-label { color: var(--taupe); margin-bottom: 20px; }
+  /* nadpis s váhou ako nadpisy kariet vertikál (Cormorant) */
+  .au-hs-title {
+    font-family: var(--serif); font-weight: 300;
+    font-size: clamp(32px, 3.6vw, 50px); line-height: 1.02; letter-spacing: -0.015em;
+    color: var(--ink); margin-bottom: 18px;
+  }
   .au-hs-headline {
     font-family: var(--serif); font-weight: 300; font-style: italic;
     font-size: clamp(26px, 2.8vw, 38px); line-height: 1.25; letter-spacing: -0.015em;

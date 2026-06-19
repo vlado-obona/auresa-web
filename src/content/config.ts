@@ -12,6 +12,8 @@ const realizacie = defineCollection({
     galeria: z.array(z.string()).optional(),
     perex: z.string(),
     case_study: z.string().optional(),
+    klient: z.string().optional(),   // voliteľné — zobrazí sa v meta detailu
+    termin: z.string().optional(),   // ak je, nahrádza zobrazenie poľa "Rok"
   }),
 });
 
