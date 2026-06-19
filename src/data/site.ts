@@ -106,3 +106,7 @@ export const PROJECT_TYPES = [
   'Kancelária alebo komerčný priestor',
   'Iné',
 ] as const;
+
+/* Google Analytics 4 — verejné Measurement ID (jedno miesto).
+   Načíta sa LEN po súhlase a LEN na produkčnom hostname (viď CookieBanner). */
+export const GA4_ID = 'G-YYBJJWHTQ6';

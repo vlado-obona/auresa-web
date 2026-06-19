@@ -124,8 +124,7 @@ const jsonLd = {
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 
-    <!-- GA4 placeholder (aktivuje sa Fáza 5) -->
-    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXX"></script> -->
+    <!-- GA4 sa načítava consent-gated v CookieBanner (len po súhlase, len na produkcii) -->
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>

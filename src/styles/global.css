@@ -328,10 +328,14 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 .au-cookie { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 120; max-width: 560px; margin-inline: auto; background: var(--bone); color: var(--ink); border: 1px solid var(--line-strong); padding: 20px 22px; display: none; box-shadow: 0 8px 40px rgba(58,46,36,0.18); }
 .au-cookie.show { display: block; }
 .au-cookie p { font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
-.au-cookie-actions { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
-.au-cookie-accept { background: var(--ink); color: var(--bone); padding: 10px 20px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; transition: opacity 0.2s; }
+.au-cookie-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+/* obe tlačidlá rovnaká veľkosť/váha (GDPR: odmietnutie rovnako ľahké ako súhlas) */
+.au-cookie-btn { padding: 10px 22px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s, background 0.2s, color 0.2s; border: 1px solid var(--ink); }
+.au-cookie-accept { background: var(--ink); color: var(--bone); }
 .au-cookie-accept:hover { opacity: 0.85; }
-.au-cookie-more { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+.au-cookie-reject { background: transparent; color: var(--ink); }
+.au-cookie-reject:hover { background: var(--ink); color: var(--bone); }
+.au-cookie-more { font-size: 11px; letter-spacing: 0.04em; text-transform: none; color: var(--olive); white-space: nowrap; }
 
 /* ─── SUBPAGE / LEGAL próza ─────────────────────────────────── */
 .au-page-hero { padding: calc(var(--pad-y) * 0.9) var(--pad-x) calc(var(--pad-y) * 0.5); background: var(--bone); border-bottom: 1px solid var(--line); }

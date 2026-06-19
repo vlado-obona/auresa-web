@@ -1,29 +1,79 @@
 ---
-/* CookieBanner — minimalistický, vlastný (žiadna externá knižnica).
-   Zobrazí sa len ak localStorage 'au-consent' nie je nastavené. */
+/* CookieBanner — vlastný consent (žiadna externá knižnica).
+   - Súhlasím / Odmietnuť rovnocenne (žiadne predzaškrtnutie).
+   - Voľba v localStorage 'au-consent' = {state:'granted'|'denied', ts}.
+   - GA4 sa načíta LEN po 'granted' a LEN na produkčnom hostname (auresa.sk);
+     na test.auresa.sk je mechanizmus prítomný, ale dormantný.
+   - Reset cez [data-cookie-reset] (footer + /cookies/) — odvolanie = rovnako ľahké. */
+import { GA4_ID } from '../data/site';
 ---
-<div class="au-cookie" data-cookie hidden>
-  <p>Používame funkčné cookies pre správne fungovanie webu.</p>
+<div class="au-cookie" data-cookie hidden role="dialog" aria-label="Súhlas s cookies">
+  <p>
+    Používame nevyhnutné cookies pre chod webu a — s vaším súhlasom — anonymnú štatistiku
+    návštevnosti (Google Analytics). <a class="au-cookie-more" href="/cookies/">Viac informácií →</a>
+  </p>
   <div class="au-cookie-actions">
-    <button type="button" class="au-cookie-accept" data-cookie-accept>Súhlasím</button>
-    <a class="au-cookie-more" href="/cookies/">Viac informácií →</a>
+    <button type="button" class="au-cookie-btn au-cookie-accept" data-cookie-accept>Súhlasím</button>
+    <button type="button" class="au-cookie-btn au-cookie-reject" data-cookie-reject>Odmietnuť</button>
   </div>
 </div>
 
-<script>
-  const banner = document.querySelector('[data-cookie]');
-  const accept = document.querySelector('[data-cookie-accept]');
-  if (banner) {
-    try {
-      if (!localStorage.getItem('au-consent')) {
-        banner.hidden = false;
-        banner.classList.add('show');
+<script define:vars={{ GA4_ID }}>
+  (function () {
+    const KEY = 'au-consent';
+    const PROD_HOSTS = ['auresa.sk', 'www.auresa.sk'];
+    const isProd = PROD_HOSTS.indexOf(location.hostname) !== -1;
+    const banner = document.querySelector('[data-cookie]');
+
+    function getConsent() {
+      try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { return null; }
+    }
+    function setConsent(state) {
+      try { localStorage.setItem(KEY, JSON.stringify({ state: state, ts: Date.now() })); } catch {}
+    }
+    function showBanner() { if (banner) { banner.hidden = false; banner.classList.add('show'); } }
+    function hideBanner() { if (banner) { banner.classList.remove('show'); banner.hidden = true; } }
+
+    function loadGA4() {
+      if (!isProd) return;                 // dormantné mimo produkcie (test.auresa.sk)
+      if (window.__au_ga4) return;
+      window.__au_ga4 = true;
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', GA4_ID);
+    }
+    function deleteGACookies() {
+      const base = location.hostname.replace(/^www\./, '');
+      const names = ['_ga', '_ga_' + GA4_ID.replace(/^G-/, '')];
+      names.forEach(function (n) {
+        document.cookie = n + '=; Max-Age=0; path=/';
+        document.cookie = n + '=; Max-Age=0; path=/; domain=' + location.hostname;
+        document.cookie = n + '=; Max-Age=0; path=/; domain=.' + base;
+      });
+    }
+
+    // init
+    const c = getConsent();
+    if (!c) showBanner();
+    else if (c.state === 'granted') loadGA4();
+
+    // delegované akcie (banner + reset odkazy v footeri/cookies)
+    document.addEventListener('click', function (e) {
+      const el = e.target instanceof Element ? e.target : null;
+      if (!el) return;
+      if (el.closest('[data-cookie-accept]')) { setConsent('granted'); hideBanner(); loadGA4(); }
+      else if (el.closest('[data-cookie-reject]')) { setConsent('denied'); hideBanner(); deleteGACookies(); }
+      else if (el.closest('[data-cookie-reset]')) {
+        e.preventDefault();
+        try { localStorage.removeItem(KEY); } catch {}
+        deleteGACookies();
+        showBanner();
       }
-    } catch { /* localStorage nedostupné — banner nezobraziť */ }
-    accept?.addEventListener('click', () => {
-      try { localStorage.setItem('au-consent', '1'); } catch {}
-      banner.classList.remove('show');
-      banner.hidden = true;
     });
-  }
+  })();
 </script>
