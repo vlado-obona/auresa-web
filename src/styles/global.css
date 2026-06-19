@@ -116,6 +116,8 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
   background: var(--ink); color: var(--bone); padding: 10px 16px;
 }
 .au-skip:focus { left: 8px; top: 8px; }
+/* viditeľný klávesnicový focus (svetlé aj tmavé pozadie) */
+a:focus-visible, button:focus-visible { outline: 2px solid var(--au-accent); outline-offset: 2px; }
 
 /* ─── NAV ───────────────────────────────────────────────────── */
 .au-nav {
@@ -335,7 +337,7 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 .au-cookie-accept:hover { opacity: 0.85; }
 .au-cookie-reject { background: transparent; color: var(--ink); }
 .au-cookie-reject:hover { background: var(--ink); color: var(--bone); }
-.au-cookie-more { font-size: 11px; letter-spacing: 0.04em; text-transform: none; color: var(--olive); white-space: nowrap; }
+.au-cookie-more { font-size: 11px; letter-spacing: 0.04em; text-transform: none; color: var(--ink); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
 
 /* ─── SUBPAGE / LEGAL próza ─────────────────────────────────── */
 .au-page-hero { padding: calc(var(--pad-y) * 0.9) var(--pad-x) calc(var(--pad-y) * 0.5); background: var(--bone); border-bottom: 1px solid var(--line); }
