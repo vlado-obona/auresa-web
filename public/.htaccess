@@ -4,6 +4,20 @@ DirectoryIndex index.html index.htm
 # Apache na Websupporte (LiteSpeed/Apache 2.4)
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # --- Kanonizácia hosta (kanonický host = auresa.sk, https) ---
+  # http -> https (ak nerieši hosting; bez slučky — za proxy sa testuje X-Forwarded-Proto)
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  # www -> non-www
+  RewriteCond %{HTTP_HOST} ^www\.auresa\.sk$ [NC]
+  RewriteRule ^ https://auresa.sk%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Test subdoména sa NEINDEXuje (prod auresa.sk ostáva index)
+<IfModule mod_setenvif.c>
+  SetEnvIf Host "^test\.auresa\.sk$" IS_TEST
 </IfModule>
 
 # Bezpečnostné hlavičky (základ)
@@ -11,6 +25,8 @@ DirectoryIndex index.html index.htm
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
+  # noindex LEN na test hoste (cez env z SetEnvIf vyššie)
+  Header set X-Robots-Tag "noindex, nofollow" env=IS_TEST
 </IfModule>
 
 # Cache statických assetov (Astro hashované súbory v /_astro/ sú immutable)
