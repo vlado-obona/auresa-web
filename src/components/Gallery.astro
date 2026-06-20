@@ -89,6 +89,10 @@ const { images, alt } = Astro.props;
     display: flex; align-items: center; justify-content: center;
     opacity: 0; transition: opacity 0.3s ease;
   }
+  /* KRITICKÉ: zatvorený lightbox musí byť display:none, inak neviditeľný overlay
+     (opacity:0, z-index:200, inset:0) požiera VŠETKY kliky na stránke. Autorské
+     display:flex prebíja UA [hidden]{display:none}, preto to treba explicitne. */
+  .au-lightbox[hidden] { display: none; }
   .au-lightbox.open { opacity: 1; }
   .au-lb-img {
     max-width: 92vw; max-height: 88vh; object-fit: contain;

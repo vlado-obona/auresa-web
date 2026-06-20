@@ -1,8 +1,16 @@
 ---
-/* Navigácia — sticky, transparent → bone pri scrolle. Prvé tri odkazy
-   otvárajú SidePanel (data-panel); O mne / Kontakt sú kotvy. Mobile: hamburger. */
+/* Navigácia — sticky, transparent → bone pri scrolle. Všetkých 5 položiek sú
+   plnohodnotné odkazy (jeden {label, href} vzor): 3 vertikály na podstránky,
+   O mne / Kontakt kotvy. Logo = preklik na úvod. Mobile: hamburger. */
 import logo from '../assets/logo/auresa_logo_ink_tight.svg?raw';
 import { VERTS } from '../data/site';
+
+// Jednotný zoznam položiek menu — rovnaký <a> pre všetky (žiadny text-only/button).
+const navLinks = [
+  ...VERTS.map((v) => ({ label: v.title, href: `/${v.slug}/` })),
+  { label: 'O mne', href: '/#o-mne' },
+  { label: 'Kontakt', href: '/#kontakt' },
+];
 ---
 <header class="au-nav" id="au-nav">
   <a href="/" class="au-nav__logo" aria-label="Auresa Design Studio — domov" set:html={logo}></a>
@@ -12,18 +20,16 @@ import { VERTS } from '../data/site';
   </button>
 
   <nav class="au-nav__links" id="au-nav-links" aria-label="Hlavná navigácia">
-    {VERTS.map((v) => (
-      <button type="button" class="ulink" data-panel={v.key}>{v.title}</button>
+    {navLinks.map((l) => (
+      <a href={l.href} class="ulink">{l.label}</a>
     ))}
-    <a href="/#o-mne" class="ulink">O mne</a>
-    <a href="/#kontakt" class="ulink">Kontakt</a>
   </nav>
 </header>
 
 <script>
   const nav = document.getElementById('au-nav');
   const toggle = nav?.querySelector('.au-nav__toggle');
-  const links = nav?.querySelectorAll('.au-nav__links a, .au-nav__links button');
+  const links = nav?.querySelectorAll('.au-nav__links a');
 
   // scroll background
   const onScroll = () => {
