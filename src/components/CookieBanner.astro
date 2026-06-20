@@ -4,8 +4,10 @@
    - Voľba v localStorage 'au-consent' = {state:'granted'|'denied', ts}.
    - GA4 sa načíta LEN po 'granted' a LEN na produkčnom hostname (auresa.sk);
      na test.auresa.sk je mechanizmus prítomný, ale dormantný.
+   - GTM (prázdny kontajner) sa načíta rovnako consent-gated: LEN po 'granted'
+     a LEN na čistom prod hostname auresa.sk (www/test/staging/localhost dormantné).
    - Reset cez [data-cookie-reset] (footer + /cookies/) — odvolanie = rovnako ľahké. */
-import { GA4_ID } from '../data/site';
+import { GA4_ID, GTM_ID } from '../data/site';
 ---
 <div class="au-cookie" data-cookie hidden tabindex="-1" role="dialog" aria-label="Súhlas s cookies" aria-describedby="au-cookie-desc">
   <p id="au-cookie-desc">
@@ -18,7 +20,7 @@ import { GA4_ID } from '../data/site';
   </div>
 </div>
 
-<script define:vars={{ GA4_ID }}>
+<script define:vars={{ GA4_ID, GTM_ID }}>
   (function () {
     const KEY = 'au-consent';
     const PROD_HOSTS = ['auresa.sk', 'www.auresa.sk'];
@@ -55,9 +57,23 @@ import { GA4_ID } from '../data/site';
       window.gtag('js', new Date());
       window.gtag('config', GA4_ID);
     }
+    // GTM — prázdny kontajner, consent-gated, LEN na čistom prod hostname auresa.sk.
+    // (www/test/staging/localhost = dormantné; www aj tak 301 → auresa.sk.)
+    function loadGTM() {
+      if (location.hostname !== 'auresa.sk') return;   // dormantné mimo čistého prod
+      if (window.__au_gtm) return;
+      window.__au_gtm = true;
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtm.js?id=' + GTM_ID;
+      document.head.appendChild(s);
+    }
     function disableGA() {
       window[DISABLE_FLAG] = true;         // okamžite zastaví bežiaci GA do reloadu
       window.__au_ga4 = false;
+      window.__au_gtm = false;             // GTM sa pri ďalšom načítaní nenačíta (prázdny kontajner)
     }
     function deleteGACookies() {
       const base = location.hostname.replace(/^www\./, '');
@@ -74,13 +90,13 @@ import { GA4_ID } from '../data/site';
     const valid = !!c && (c.state === 'granted' || c.state === 'denied');
     const expired = valid && (!c.ts || Date.now() - c.ts > MAX_AGE_MS);
     if (!valid || expired) { clearConsent(); showBanner(); }
-    else if (c.state === 'granted') loadGA4();
+    else if (c.state === 'granted') { loadGA4(); loadGTM(); }
 
     // delegované akcie (banner + reset odkazy v footeri/cookies)
     document.addEventListener('click', function (e) {
       const el = e.target instanceof Element ? e.target : null;
       if (!el) return;
-      if (el.closest('[data-cookie-accept]')) { setConsent('granted'); hideBanner(); loadGA4(); }
+      if (el.closest('[data-cookie-accept]')) { setConsent('granted'); hideBanner(); loadGA4(); loadGTM(); }
       else if (el.closest('[data-cookie-reject]')) { setConsent('denied'); hideBanner(); disableGA(); deleteGACookies(); }
       else if (el.closest('[data-cookie-reset]')) {
         e.preventDefault();

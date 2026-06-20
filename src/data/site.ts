@@ -109,3 +109,9 @@ export const PROJECT_TYPES = [
 /* Google Analytics 4 — verejné Measurement ID (jedno miesto).
    Načíta sa LEN po súhlase a LEN na produkčnom hostname (viď CookieBanner). */
 export const GA4_ID = 'G-YYBJJWHTQ6';
+
+/* Google Tag Manager — verejné Container ID (jedno miesto).
+   Consent-gated: načíta sa LEN po súhlase a LEN na čistom prod hostname `auresa.sk`
+   (www/test/staging/localhost = dormantné). Kontajner je zatiaľ PRÁZDNY (žiadne tagy)
+   → GA4 ostáva jediný zdroj page_view, žiadne dvojité počítanie. Viď CookieBanner. */
+export const GTM_ID = 'GTM-P9MZJWW9';
