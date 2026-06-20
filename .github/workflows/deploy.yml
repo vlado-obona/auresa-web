@@ -2,7 +2,7 @@ name: Deploy to Websupport
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
   workflow_dispatch:
 
 jobs:
@@ -19,18 +19,18 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      # PHP API endpointy (public/api/*.php) Astro prenesie do dist/ ako static;
-      # PHPMailer/composer závislosti sa inštalujú na serveri — viď reporty.
+      - name: Install lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 
-      # SFTP-only účet (deploy.auresa.sk) NEPOVOĽUJE shell exec:
-      #  - wlixcc sftp_only:true  → `sftp put -r` nevie vytvoriť priečinky
-      #    ("Unable to canonicalize path")
-      #  - wlixcc sftp_only:false → skúša `ssh mkdir` → "exec request failed"
-      #  - SamKirkland FTP-Deploy-Action → nepodporuje protocol: sftp
-      # Riešenie: lftp `mirror -R` vytvára priečinky cez SFTP protokol (MKDIR),
-      # bez shellu. Credentials cez ~/.netrc (mimo command-line = bezpečné voči
-      # špeciálnym znakom v hesle).
-      - name: Deploy via SFTP (lftp)
+      # Deploy cieľ podľa vetvy:
+      #   main    → PROD  (existujúci secret SFTP_PATH = /sub/test) — NEMENIŤ
+      #   staging → STAGING (nový secret SFTP_PATH_STAGING = /sub/staging)
+      # Rovnaký SFTP účet (HOST/PORT/USER/PASS), líši sa len cieľová cesta.
+      # SFTP-only účet nepovoľuje shell exec → lftp `mirror -R` vytvára priečinky
+      # cez SFTP MKDIR. Mirror je ADITÍVNY (bez --delete).
+
+      - name: Deploy PROD (main → SFTP_PATH)
+        if: github.ref == 'refs/heads/main'
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
           SFTP_PORT: ${{ secrets.SFTP_PORT }}
@@ -38,5 +38,17 @@ jobs:
           LFTP_PASSWORD: ${{ secrets.SFTP_PASS }}
           SFTP_PATH: ${{ secrets.SFTP_PATH }}
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+          if [ -z "$SFTP_PATH" ]; then echo "::error::SFTP_PATH (prod) nie je nastavený"; exit 1; fi
+          lftp -u "$SFTP_USER" --env-password "sftp://$SFTP_HOST:$SFTP_PORT" -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; mkdir -pf \"$SFTP_PATH\"; mirror -R --no-perms --verbose --parallel=4 ./dist/ \"$SFTP_PATH/\"; bye"
+
+      - name: Deploy STAGING (staging → SFTP_PATH_STAGING)
+        if: github.ref == 'refs/heads/staging'
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          LFTP_PASSWORD: ${{ secrets.SFTP_PASS }}
+          SFTP_PATH: ${{ secrets.SFTP_PATH_STAGING }}
+        run: |
+          if [ -z "$SFTP_PATH" ]; then echo "::error::SFTP_PATH_STAGING nie je nastavený — pridaj secret v GitHub Settings (Settings → Secrets → Actions)"; exit 1; fi
           lftp -u "$SFTP_USER" --env-password "sftp://$SFTP_HOST:$SFTP_PORT" -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; mkdir -pf \"$SFTP_PATH\"; mirror -R --no-perms --verbose --parallel=4 ./dist/ \"$SFTP_PATH/\"; bye"

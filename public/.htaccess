@@ -15,9 +15,10 @@ DirectoryIndex index.html index.htm
   RewriteRule ^ https://auresa.sk%{REQUEST_URI} [L,R=301]
 </IfModule>
 
-# NEINDEXovať: (1) testovaciu subdoménu, (2) interný stavový priečinok /_stav/
+# NEINDEXovať: (1) test + staging subdomény, (2) interný stavový priečinok /_stav/
+# (prod auresa.sk nematchuje → ostáva indexovateľný)
 <IfModule mod_setenvif.c>
-  SetEnvIf Host "^test\.auresa\.sk$" AU_NOINDEX
+  SetEnvIf Host "^(test|staging)\.auresa\.sk$" AU_NOINDEX
   SetEnvIf Request_URI "^/_stav/" AU_NOINDEX
 </IfModule>
 
