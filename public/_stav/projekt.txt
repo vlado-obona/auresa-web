@@ -39,6 +39,7 @@ FUNKČNÉ PRVKY
 - Analytika GA4: spúšťa sa len po súhlase a len na produkcii (na teste vypnutá).
 - Cookie banner: Súhlasím/Odmietnuť rovnocenne, odvolanie cez "Nastavenia cookies".
 - Navigácia: logo aj všetkých 5 položiek menu sú klikateľné odkazy.
+- Hero CTA: primárne tlačidlo "Nezáväzná konzultácia" v hero (homepage + 3 vertikály) -> /#kontakt.
 - Galérie realizácií + home staging: mriežka + lightbox (klik, šípky, Esc).
 
 
