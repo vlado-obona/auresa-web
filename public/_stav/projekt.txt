@@ -37,6 +37,7 @@ FUNKČNÉ PRVKY
 -------------
 - Kontaktný formulár: funkčný, leady chodia na info@auresa.sk.
 - Analytika GA4: spúšťa sa len po súhlase a len na produkcii (na teste vypnutá).
+- Google Tag Manager (GTM): prázdny kontajner, consent-gated rovnako ako GA4 (len po súhlase, len na produkcii). Zatiaľ bez tagov -> GA4 ostáva jediný zdroj page_view (žiadne dvojité počítanie).
 - Cookie banner: Súhlasím/Odmietnuť rovnocenne, odvolanie cez "Nastavenia cookies".
 - Navigácia: logo aj všetkých 5 položiek menu sú klikateľné odkazy.
 - Hero CTA: primárne tlačidlo "Nezáväzná konzultácia" v hero (homepage + 3 vertikály) -> /#kontakt.
