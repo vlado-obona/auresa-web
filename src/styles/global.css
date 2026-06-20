@@ -110,6 +110,11 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 .au-cta:hover { background: var(--au-text); color: var(--au-bg); }
 .au-cta .arr { display: inline-block; transition: transform 0.3s; }
 .au-cta:hover .arr { transform: translateX(6px); }
+/* Primárne hero CTA — odsadenie; na desktope obsahová šírka vľavo, na mobile plná šírka */
+.d1-cover-cta, .au-subhero-cta { margin-top: 28px; align-self: flex-start; }
+@media (max-width: 900px) {
+  .d1-cover-cta, .au-subhero-cta { display: flex; width: 100%; justify-content: center; }
+}
 
 .au-skip {
   position: absolute; left: -9999px; top: 0; z-index: 200;

@@ -6,8 +6,10 @@ interface Props {
   eyebrow: string;
   photo: string;
   alt: string;
+  ctaText?: string;
+  ctaHref?: string;
 }
-const { eyebrow, photo, alt } = Astro.props;
+const { eyebrow, photo, alt, ctaText, ctaHref } = Astro.props;
 ---
 <section class="au-subhero">
   <img class="au-subhero-bg" src={photo} alt={alt} loading="eager" fetchpriority="high" decoding="async" />
@@ -15,5 +17,8 @@ const { eyebrow, photo, alt } = Astro.props;
   <div class="au-subhero-text">
     <div class="d1-eyebrow"><span class="d1-eyebrow-title">{eyebrow}</span></div>
     <slot />
+    {ctaText && ctaHref && (
+      <a href={ctaHref} class="au-cta au-subhero-cta">{ctaText} <span class="arr">→</span></a>
+    )}
   </div>
 </section>
