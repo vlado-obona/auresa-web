@@ -18,7 +18,7 @@ const { eyebrow, photo, alt, ctaText, ctaHref } = Astro.props;
     <div class="d1-eyebrow"><span class="d1-eyebrow-title">{eyebrow}</span></div>
     <slot />
     {ctaText && ctaHref && (
-      <a href={ctaHref} class="au-cta au-subhero-cta">{ctaText} <span class="arr">→</span></a>
+      <a href={ctaHref} class="au-cta au-subhero-cta" data-cta="konzultacia">{ctaText} <span class="arr">→</span></a>
     )}
   </div>
 </section>

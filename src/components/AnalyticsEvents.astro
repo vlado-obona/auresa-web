@@ -1,0 +1,28 @@
+---
+/* AnalyticsEvents — konverzné signály. Jeden helper window.auTrack(event, params):
+   (a) ak existuje window.gtag → gtag('event',…)  // priamo do GA4 (okamžitý baseline)
+   (b) vždy dataLayer.push({event,…})             // pre budúce GTM / ad tagy
+   Bez súhlasu gtag/GTM nebežia → reálne sa nič neodošle (push je len in-memory).
+   Delegované kliky: tel:, mailto:, CTA „Nezáväzná konzultácia" ([data-cta]). */
+---
+<script>
+  (function () {
+    function auTrack(event, params) {
+      params = params || {};
+      try { if (typeof window.gtag === 'function') window.gtag('event', event, params); } catch (e) {}
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push(Object.assign({ event: event }, params));
+    }
+    window.auTrack = auTrack;
+
+    document.addEventListener('click', function (e) {
+      var a = e.target instanceof Element ? e.target.closest('a, [data-cta]') : null;
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (href.indexOf('tel:') === 0) auTrack('tel_click', { link_url: href });
+      else if (href.indexOf('mailto:') === 0) auTrack('mailto_click', { link_url: href });
+      var cta = a.getAttribute('data-cta');
+      if (cta) auTrack('cta_click', { cta: cta, location: location.pathname });
+    });
+  })();
+</script>

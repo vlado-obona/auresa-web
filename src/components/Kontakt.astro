@@ -85,6 +85,8 @@ import { SITE, PROJECT_TYPES } from '../data/site';
         form.reset();
         status.setAttribute('data-state', 'ok');
         status.textContent = data.message || 'Ďakujeme. Ozveme sa Vám.';
+        // konverzný event LEN pri úspechu (nie pri chybe)
+        if (window.auTrack) window.auTrack('form_submit', { form_id: 'kontakt' });
       } else {
         status.setAttribute('data-state', 'err');
         status.textContent = data.message || 'Správu sa nepodarilo odoslať. Napíšte nám prosím priamo na info@auresa.sk.';
