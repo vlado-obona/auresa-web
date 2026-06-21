@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /_stav/
 
 Sitemap: https://auresa.sk/sitemap-index.xml

@@ -15,11 +15,9 @@ DirectoryIndex index.html index.htm
   RewriteRule ^ https://auresa.sk%{REQUEST_URI} [L,R=301]
 </IfModule>
 
-# NEINDEXovať: (1) test + staging subdomény, (2) interný stavový priečinok /_stav/
-# (prod auresa.sk nematchuje → ostáva indexovateľný)
+# NEINDEXovať test + staging subdomény (prod auresa.sk nematchuje → ostáva indexovateľný)
 <IfModule mod_setenvif.c>
   SetEnvIf Host "^(test|staging)\.auresa\.sk$" AU_NOINDEX
-  SetEnvIf Request_URI "^/_stav/" AU_NOINDEX
 </IfModule>
 
 # Bezpečnostné hlavičky (základ)
@@ -27,7 +25,7 @@ DirectoryIndex index.html index.htm
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
-  # noindex pre test host aj /_stav/ (cez env z SetEnvIf vyššie)
+  # noindex pre test/staging host (cez env z SetEnvIf vyššie)
   Header set X-Robots-Tag "noindex, nofollow" env=AU_NOINDEX
 </IfModule>
 

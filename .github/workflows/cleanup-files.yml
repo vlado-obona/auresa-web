@@ -34,7 +34,7 @@ jobs:
             case "$f" in
               /*|*..*) echo "Preskakujem nebezpečnú cestu: $f"; continue;;
             esac
-            CMD="$CMD rm -f $f;"
+            CMD="$CMD rm -r -f $f;"
             n=$((n+1))
             echo "  rm $f"
           done
