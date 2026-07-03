@@ -1,7 +1,13 @@
 ---
 /* AnalyticsEvents — konverzné signály. Jeden helper window.auTrack(event, params):
-   (a) ak existuje window.gtag → gtag('event',…)  // priamo do GA4 (okamžitý baseline)
-   (b) vždy dataLayer.push({event,…})             // pre budúce GTM / ad tagy
+   (a) ak existuje window.gtag → gtag('event', event, …)      // GA4 priamo, PÔVODNÉ názvy
+       (tel_click, mailto_click, cta_click, form_submit — kontinuita GA4 reportov)
+   (b) vždy dataLayer.push({event: 'au_' + event, …})          // pre GTM / Meta tagy
+       Prefix au_* zabraňuje double-fire: gtag() interne pushuje do dataLayer,
+       takže GTM CE trigger na neprefixovanom názve pálil tag 2× na jeden úkon.
+   GTM CE triggre musia počúvať na au_* — prepína sa v GTM UI súčasne s nasadením
+   tohto commitu (tel_click→au_tel_click, mailto_click→au_mailto_click,
+   form_submit→au_form_submit, cta_click→au_cta_click) + publish.
    Bez súhlasu gtag/GTM nebežia → reálne sa nič neodošle (push je len in-memory).
    Delegované kliky: tel:, mailto:, CTA „Nezáväzná konzultácia" ([data-cta]). */
 ---
@@ -11,7 +17,7 @@
       params = params || {};
       try { if (typeof window.gtag === 'function') window.gtag('event', event, params); } catch (e) {}
       window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push(Object.assign({ event: event }, params));
+      window.dataLayer.push(Object.assign({ event: 'au_' + event }, params));
     }
     window.auTrack = auTrack;
 
