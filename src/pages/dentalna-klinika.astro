@@ -1,7 +1,11 @@
 ---
+/* LP Dentálna klinika: hero (CTA #kontakt + tel) → Od návrhu po realizáciu →
+   Ako spolupráca prebieha → Realizácie → FAQ → formulár (Kontakt, defaultTyp). */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import RealizacieGrid from '../components/RealizacieGrid.astro';
 import PageHero from '../components/PageHero.astro';
+import Kontakt from '../components/Kontakt.astro';
+import { SITE } from '../data/site';
 import { getCollection } from 'astro:content';
 const title = 'Interiérový dizajn dentálnej kliniky | Auresa Design Studio Prešov';
 const description = 'Navrhujeme interiéry zubných ambulancií a dentálnych kliník — čakárne, ošetrovne aj zázemie. Priestor, ktorý upokojuje pacienta a uľahčuje prácu tímu. GlamiDent, Ideal Smile, ArtSmile.';
@@ -9,20 +13,88 @@ const realizacie = (await getCollection('realizacie'))
   .map((e) => ({ ...e.data, slug: e.slug }))
   .filter((d) => d.vertikala === 'dental')
   .sort((a, b) => b.rok - a.rok);
+
+const faq = [
+  { q: 'Koľko to stojí?', a: 'Každá ambulancia je iná, preto cenu nestrieľame od stola. Po nezáväznej konzultácii a obhliadke dostanete ponuku presne pre váš priestor — viete, za čo platíte, skôr než sa rozhodnete.' },
+  { q: 'Ako dlho trvá návrh a realizácia?', a: 'Typicky 3 až 9 mesiacov podľa rozsahu — od prvej konzultácie po odovzdanie. Presný harmonogram je súčasťou ponuky.' },
+  { q: 'Musí ambulancia počas realizácie zavrieť?', a: 'Snažíme sa tomu vyhnúť. Harmonogram staviame tak, aby prevádzka bežala čo najdlhšie — etapy, práce mimo ordinačných hodín, jasný plán.' },
+  { q: 'Riešite aj hygienické normy a povolenia?', a: 'Áno. Návrh vzniká s ohľadom na požiadavky RÚVZ a prevádzkové normy, dokumentáciu ladíme s projektantom.' },
+  { q: 'Kde pôsobíte?', a: 'Štúdio sídli v Prešove. Realizujeme v Prešovskom a Košickom kraji a do približne 150 km — Poprad, Michalovce, Humenné aj okolie.' },
+];
+
+const sluzby = [
+  { label: 'Návrh', text: 'Autorský koncept priestoru: dispozícia, svetlo, materiály. Návrh, ktorý rešpektuje prevádzku ambulancie aj hygienické požiadavky.' },
+  { label: 'Dokumentácia', text: 'Podklady, podľa ktorých sa dá naozaj stavať. Výkresy, špecifikácie a rozpočet zladené s projektantom a dodávateľmi.' },
+  { label: 'Realizácia', text: 'Dohliadame na priebeh až po odovzdanie. Vy sa venujete pacientom, priestor preberáte hotový.' },
+];
+
+const kroky = [
+  { num: '01', label: 'Konzultácia', text: 'Krátky rozhovor o vašom zámere — telefonicky alebo online, do 30 minút. Nezáväzne.' },
+  { num: '02', label: 'Obhliadka a zadanie', text: 'Prídeme k vám. Zameriame priestor, prejdeme prevádzku, počúvame, čo tím potrebuje.' },
+  { num: '03', label: 'Návrh a ponuka', text: 'Dostanete koncept priestoru a ponuku zostavenú presne pre váš priestor a rozsah.' },
+  { num: '04', label: 'Realizácia a odovzdanie', text: 'Realizujeme podľa návrhu, priebežne vás informujeme a priestor odovzdáme pripravený na prvého pacienta.' },
+];
 ---
 <BaseLayout title={title} description={description} ogImage="/images/glamident_treatment.webp">
-  <PageHero eyebrow="Dentálna klinika" photo="/images/glamident_cakaren-12.webp" alt="Interiér dentálnej kliniky — čakáreň GlamiDent" ctaText="Nezáväzná konzultácia" ctaHref="/#kontakt">
+  <PageHero
+    eyebrow="Dentálna klinika"
+    photo="/images/glamident_cakaren-12.webp"
+    alt="Interiér dentálnej kliniky — čakáreň GlamiDent"
+    ctaText="Nezáväzná konzultácia"
+    ctaHref="#kontakt"
+    telText={SITE.phone}
+    telHref={SITE.phoneHref}
+  >
     <h1 class="au-subhero-h1">Priestor, ktorý <em>upokojuje.</em></h1>
     <p class="au-subhero-sub">Starostlivosť, ku ktorej sa pacienti vracajú.</p>
     <p class="au-subhero-lead">Keď pacient prekročí prah ambulancie, prvý dojem vzniká ešte pred samotným ošetrením. Citlivo navrhnutý interiér zmierňuje stres, podporuje pocit istoty a vytvára prostredie, v ktorom sa pacient cíti prijatý. Dizajn sa tak stáva nenápadnou, no dôležitou súčasťou kvalitnej zdravotnej starostlivosti.</p>
   </PageHero>
 
   <section class="d1-section">
+    <div class="d1-eyebrow"><span class="d1-eyebrow-title">Od návrhu po realizáciu</span></div>
+    <p class="au-lp-intro">Jeden partner od prvej skice po deň, keď si sadne prvý pacient.</p>
+    <div class="au-lp-cols">
+      {sluzby.map((s) => (
+        <div class="au-lp-col">
+          <div class="au-label">{s.label}</div>
+          <p>{s.text}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="d1-section">
+    <div class="d1-eyebrow"><span class="d1-eyebrow-title">Ako spolupráca prebieha</span></div>
+    <ol class="au-lp-steps">
+      {kroky.map((k) => (
+        <li class="au-lp-step">
+          <div class="au-label">{k.num} · {k.label}</div>
+          <p>{k.text}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="d1-section">
     <div class="d1-eyebrow"><span class="d1-eyebrow-title">Realizácie</span></div>
     <RealizacieGrid items={realizacie} />
     <div class="au-stub-cta" style="margin-top:48px">
-      <a href="/#kontakt" class="au-cta">Napíšte nám <span class="arr">→</span></a>
+      <a href="#kontakt" class="au-cta">Napíšte nám <span class="arr">→</span></a>
       <a href="/realizacie/" class="au-cta">Všetky realizácie <span class="arr">→</span></a>
     </div>
   </section>
+
+  <section class="d1-section">
+    <div class="d1-eyebrow"><span class="d1-eyebrow-title">Časté otázky</span></div>
+    <div class="au-faq">
+      {faq.map((f) => (
+        <details class="au-faq-item">
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <Kontakt defaultTyp="Dentálna klinika" />
 </BaseLayout>

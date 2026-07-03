@@ -8,8 +8,10 @@ interface Props {
   alt: string;
   ctaText?: string;
   ctaHref?: string;
+  telText?: string;   // voliteľný tel riadok pod CTA (LP): mikro-label + klikateľné číslo
+  telHref?: string;
 }
-const { eyebrow, photo, alt, ctaText, ctaHref } = Astro.props;
+const { eyebrow, photo, alt, ctaText, ctaHref, telText, telHref } = Astro.props;
 ---
 <section class="au-subhero">
   <img class="au-subhero-bg" src={photo} alt={alt} loading="eager" fetchpriority="high" decoding="async" />
@@ -19,6 +21,9 @@ const { eyebrow, photo, alt, ctaText, ctaHref } = Astro.props;
     <slot />
     {ctaText && ctaHref && (
       <a href={ctaHref} class="au-cta au-subhero-cta" data-cta="konzultacia">{ctaText} <span class="arr">→</span></a>
+    )}
+    {telText && telHref && (
+      <p class="au-subhero-tel"><span class="au-label">Alebo zavolajte</span> <a href={telHref}>{telText}</a></p>
     )}
   </div>
 </section>

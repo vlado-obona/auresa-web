@@ -390,10 +390,62 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--au-accent); out
   font-family: var(--sans); font-size: calc(15px * var(--au-fs)); line-height: 1.7;
   color: var(--ink-soft); margin-top: 24px; max-width: 42ch;
 }
+/* tel riadok pri hero CTA (LP): mikro-label + klikateľné číslo, above-fold.
+   Desktop: inline vedľa CTA (šetrí výšku → above-fold aj na 768px viewporte);
+   mobil: pod CTA (plná šírka). */
+.au-subhero-tel { margin-top: 18px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.au-subhero-tel a {
+  font-family: var(--serif); font-size: clamp(19px, 1.8vw, 24px);
+  color: var(--au-text); text-decoration: underline; text-underline-offset: 4px;
+  text-decoration-color: var(--au-accent);
+}
+@media (min-width: 901px) {
+  .au-subhero-tel { display: inline-flex; margin: 0 0 0 24px; vertical-align: middle; }
+}
+/* nízke desktop viewporty (768–840px): stiahnuť hero odsadenia, nech CTA+tel ostanú nad foldom */
+@media (min-width: 901px) and (max-height: 840px) {
+  .au-subhero { padding-top: calc(var(--pad-y) * 0.45); padding-bottom: calc(var(--pad-y) * 0.45); }
+  .au-subhero-lead { margin-top: 16px; }
+  .au-subhero-cta { margin-top: 20px; }
+}
+
+/* LP sekcie (dentálna klinika) — stavané z existujúcich tokenov */
+.au-lp-intro {
+  font-family: var(--serif); font-weight: 300; font-style: italic;
+  font-size: clamp(26px, 2.8vw, 38px); line-height: 1.25; letter-spacing: -0.015em;
+  max-width: 30ch; margin-bottom: clamp(32px, 4vw, 56px);
+}
+.au-lp-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 3vw, 48px); max-width: 1200px; }
+.au-lp-col .au-label { margin-bottom: 12px; color: var(--au-accent); }
+.au-lp-col p { font-size: calc(15px * var(--au-fs)); line-height: 1.7; color: var(--au-text-2); max-width: 38ch; }
+.au-lp-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(24px, 3vw, 48px); list-style: none; padding: 0; margin: 0; max-width: 1300px; }
+.au-lp-step { border-top: 1px solid var(--line); padding-top: 18px; }
+.au-lp-step .au-label { margin-bottom: 12px; }
+.au-lp-step p { font-size: calc(15px * var(--au-fs)); line-height: 1.7; color: var(--au-text-2); }
+
+/* FAQ accordion — natívny details/summary, bez JS */
+.au-faq { max-width: 760px; }
+.au-faq-item { border-bottom: 1px solid var(--line); }
+.au-faq-item summary {
+  cursor: pointer; list-style: none; position: relative;
+  font-family: var(--serif); font-weight: 400; font-size: clamp(19px, 1.9vw, 24px);
+  padding: 20px 44px 20px 0;
+}
+.au-faq-item summary::-webkit-details-marker { display: none; }
+.au-faq-item summary::after {
+  content: "+"; position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  font-family: var(--sans); font-size: 22px; font-weight: 300; color: var(--au-accent);
+  transition: transform 0.25s ease;
+}
+.au-faq-item[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+.au-faq-item > p { font-size: calc(15px * var(--au-fs)); line-height: 1.7; color: var(--au-text-2); max-width: 62ch; padding: 0 0 22px; }
+
 /* mobil: čitateľnosť > efekt — text hore na takmer plnom bone, fotka jemne presvitá dole */
 @media (max-width: 900px) {
   .au-subhero { align-items: flex-start; min-height: clamp(420px, 74vh, 580px); }
   .au-subhero-text { max-width: 100%; }
+  .au-lp-cols { grid-template-columns: 1fr; }
+  .au-lp-steps { grid-template-columns: 1fr; }
   .au-subhero-veil {
     background: linear-gradient(to bottom,
       rgba(236,230,220,0.97) 0%,
