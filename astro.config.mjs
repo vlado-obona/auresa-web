@@ -7,7 +7,8 @@ export default defineConfig({
   site: 'https://auresa.sk',
   trailingSlash: 'ignore',
   output: 'static',
-  integrations: [sitemap()],
+  // /dakujeme/ je noindex ďakovná stránka — do sitemap nepatrí
+  integrations: [sitemap({ filter: (page) => !page.includes('/dakujeme') })],
   build: {
     inlineStylesheets: 'auto',
   },

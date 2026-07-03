@@ -38,6 +38,7 @@ interface Props {
   description?: string;
   ogImage?: string;
   canonical?: string;
+  noindex?: boolean;
 }
 
 const {
@@ -45,6 +46,7 @@ const {
   description = SEO.defaultDescription,
   ogImage = SEO.ogImage,
   canonical = new URL(Astro.url.pathname, SITE.url).href,
+  noindex = false,
 } = Astro.props;
 
 const ogImageAbs = new URL(ogImage, SITE.url).href;
@@ -105,7 +107,7 @@ const jsonLd = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large'} />
 
     <!-- OG / Twitter -->
     <meta property="og:type" content="website" />

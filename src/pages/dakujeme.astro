@@ -1,0 +1,24 @@
+---
+/* Ďakovná stránka po odoslaní formulára (redirect z Kontakt.astro).
+   noindex — nie je to obsahová stránka; vylúčená aj zo sitemap (astro.config filter). */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../data/site';
+const title = 'Ďakujeme — Auresa Design Studio';
+const description = 'Vaša správa je u nás. Ozveme sa Vám do 24 hodín.';
+---
+<BaseLayout title={title} description={description} noindex>
+  <section class="au-page-hero">
+    <div class="d1-eyebrow"><span class="d1-eyebrow-title">Správa odoslaná</span></div>
+    <h1>Ďakujeme. <em>Správa je u nás.</em></h1>
+  </section>
+  <article class="au-prose">
+    <p>
+      Ozveme sa Vám do 24 hodín — telefonicky alebo e-mailom, podľa toho, čo ste uviedli.
+      Ak sa chcete porozprávať skôr, zavolajte na
+      <a href={SITE.phoneHref}>{SITE.phone}</a>.
+    </p>
+    <div class="au-stub-cta">
+      <a href="/" class="au-cta">← Späť na úvod</a>
+    </div>
+  </article>
+</BaseLayout>
