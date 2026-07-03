@@ -1,0 +1,19 @@
+---
+/* 404 — Websupport servíruje dist/404.html automaticky (Apache ErrorDocument). */
+import BaseLayout from '../layouts/BaseLayout.astro';
+const title = 'Stránka sa nenašla — Auresa Design Studio';
+const description = 'Táto stránka tu nie je. Priestor, ktorý hľadáte, sa možno presunul.';
+---
+<BaseLayout title={title} description={description} noindex>
+  <section class="au-page-hero">
+    <div class="d1-eyebrow"><span class="d1-eyebrow-title">404</span></div>
+    <h1>Táto stránka <em>tu nie je.</em></h1>
+    <p>Priestor, ktorý hľadáte, sa možno presunul.</p>
+  </section>
+  <article class="au-prose">
+    <div class="au-stub-cta">
+      <a href="/" class="au-cta">Úvod <span class="arr">→</span></a>
+      <a href="/dentalna-klinika/" class="au-cta">Dentálna klinika <span class="arr">→</span></a>
+    </div>
+  </article>
+</BaseLayout>
