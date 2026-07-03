@@ -1,6 +1,9 @@
 # Preferuj statický index.html pred index.php (Astro statický web)
 DirectoryIndex index.html index.htm
 
+# Vlastná 404 (Astro dist/404.html) — bez tohto Apache servíruje default 404
+ErrorDocument 404 /404.html
+
 # Apache na Websupporte (LiteSpeed/Apache 2.4)
 <IfModule mod_rewrite.c>
   RewriteEngine On
