@@ -1,6 +1,6 @@
 {
-  "packageId": "sk.auresa.mhdpresov",
-  "host": "auresa.sk",
+  "packageId": "sk.operatorsystem.mhdpresov",
+  "host": "operatorsystem.sk",
   "name": "MHD Prešov",
   "launcherName": "MHD Prešov",
   "display": "standalone",
@@ -33,7 +33,7 @@
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
   "isMetaQuest": false,
-  "fullScopeUrl": "https://auresa.sk/mhd/",
+  "fullScopeUrl": "https://operatorsystem.sk/mhd/",
   "minSdkVersion": 21,
   "orientation": "portrait",
   "additionalTrustedOrigins": [],

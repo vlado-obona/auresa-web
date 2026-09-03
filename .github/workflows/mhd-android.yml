@@ -53,7 +53,7 @@ jobs:
 
       - name: Lokalny server pre ikony a manifest
         run: |
-          (cd public/mhd && python3 -m http.server 8081 &)
+          (cd mhd-app && python3 -m http.server 8081 &)
           sleep 2
           curl -sf http://127.0.0.1:8081/icons/icon-512.png -o /dev/null && echo "ikony OK"
 
