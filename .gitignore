@@ -15,3 +15,16 @@ public/api/composer.lock
 # os / editor
 .DS_Store
 Thumbs.db
+
+# android (TWA) — generované buildom v CI
+android/app/
+android/build/
+android/out/
+android/*.keystore
+android/*.apk
+android/*.aab
+android/*.idsig
+android/assetlinks.json
+android/gradle*
+android/settings.gradle
+android/store_icon.png

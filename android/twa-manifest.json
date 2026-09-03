@@ -1,0 +1,41 @@
+{
+  "packageId": "sk.auresa.mhdpresov",
+  "host": "auresa.sk",
+  "name": "MHD Prešov",
+  "launcherName": "MHD Prešov",
+  "display": "standalone",
+  "themeColor": "#0b7a3b",
+  "themeColorDark": "#0b7a3b",
+  "navigationColor": "#0b7a3b",
+  "navigationColorDark": "#0b7a3b",
+  "navigationDividerColor": "#0b7a3b",
+  "navigationDividerColorDark": "#0b7a3b",
+  "backgroundColor": "#f4f6f4",
+  "enableNotifications": false,
+  "startUrl": "/mhd/",
+  "iconUrl": "http://127.0.0.1:8081/icons/icon-512.png",
+  "maskableIconUrl": "http://127.0.0.1:8081/icons/icon-maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "http://127.0.0.1:8081/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://auresa.sk/mhd/",
+  "minSdkVersion": 21,
+  "orientation": "portrait",
+  "additionalTrustedOrigins": [],
+  "retainedBundles": []
+}

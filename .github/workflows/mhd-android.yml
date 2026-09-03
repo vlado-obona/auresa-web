@@ -1,0 +1,138 @@
+name: MHD Presov - Android (TWA)
+
+# Zabalí PWA /mhd/ do Android aplikácie (Trusted Web Activity, Bubblewrap):
+#   - app-release-signed.apk  → priama inštalácia do telefónu (sideload)
+#   - app-release-bundle.aab  → nahratie do Google Play Console
+#   - assetlinks.json         → patrí na https://auresa.sk/.well-known/
+#
+# Podpisový kľúč: ak existujú secrets ANDROID_KEYSTORE_B64 a
+# ANDROID_KEYSTORE_PASSWORD, použije sa stály kľúč (nutné pre aktualizácie
+# v Play). Inak sa vygeneruje nový a priloží sa do build artefaktu —
+# TREBA si ho uložiť a nastaviť ako secrets, inak ďalší build nepôjde
+# nainštalovať cez ten istý záznam v Play.
+on:
+  push:
+    branches: [claude/presov-mhd-planner-app-xnl2ew]
+    paths:
+      - 'android/**'
+      - '.github/workflows/mhd-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Instalacia Bubblewrap
+        run: npm i -g @bubblewrap/cli
+
+      - name: Konfiguracia Bubblewrap (existujuci JDK a Android SDK)
+        run: |
+          mkdir -p ~/.bubblewrap
+          cat > ~/.bubblewrap/config.json <<EOF
+          {"jdkPath": "$JAVA_HOME", "androidSdkPath": "$ANDROID_HOME"}
+          EOF
+          echo "JAVA_HOME=$JAVA_HOME  ANDROID_HOME=$ANDROID_HOME"
+
+      - name: Lokalny server pre ikony a manifest
+        run: |
+          (cd public/mhd && python3 -m http.server 8081 &)
+          sleep 2
+          curl -sf http://127.0.0.1:8081/icons/icon-512.png -o /dev/null && echo "ikony OK"
+
+      - name: Podpisovy kluc
+        id: keystore
+        working-directory: android
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -n "$KS_B64" ] && [ -n "$KS_PASS" ]; then
+            echo "$KS_B64" | base64 -d > android.keystore
+            echo "generated=false" >> "$GITHUB_OUTPUT"
+            echo "Pouzivam kluc zo secrets."
+          else
+            KS_PASS=$(openssl rand -hex 16)
+            keytool -genkeypair -alias android -keyalg RSA -keysize 2048 \
+              -validity 10000 -keystore android.keystore \
+              -storepass "$KS_PASS" -keypass "$KS_PASS" \
+              -dname "CN=MHD Presov, O=auresa, L=Presov, C=SK"
+            echo "generated=true" >> "$GITHUB_OUTPUT"
+            echo "VYGENEROVANY NOVY KLUC — uloz si ho zo build artefaktu!"
+          fi
+          echo "::add-mask::$KS_PASS"
+          echo "ks_pass=$KS_PASS" >> "$GITHUB_OUTPUT"
+
+      - name: Build APK + AAB
+        working-directory: android
+        env:
+          BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ steps.keystore.outputs.ks_pass }}
+          BUBBLEWRAP_KEY_PASSWORD: ${{ steps.keystore.outputs.ks_pass }}
+        run: |
+          bubblewrap update --skipVersionUpgrade
+          bubblewrap build --skipPwaValidation
+          ls -la *.apk *.aab || ls -laR .
+
+      - name: assetlinks.json (Digital Asset Links)
+        working-directory: android
+        env:
+          KS_PASS: ${{ steps.keystore.outputs.ks_pass }}
+        run: |
+          FP=$(keytool -list -v -keystore android.keystore -alias android \
+                -storepass "$KS_PASS" | grep 'SHA256:' | head -1 | sed 's/.*SHA256: //')
+          cat > assetlinks.json <<EOF
+          [{
+            "relation": ["delegate_permission/common.handle_all_urls"],
+            "target": {
+              "namespace": "android_app",
+              "package_name": "sk.auresa.mhdpresov",
+              "sha256_cert_fingerprints": ["$FP"]
+            }
+          }]
+          EOF
+          echo "SHA256: $FP"
+
+      - name: Pribal navod (+ kluc, ak bol vygenerovany)
+        working-directory: android
+        env:
+          GENERATED: ${{ steps.keystore.outputs.generated }}
+          KS_PASS: ${{ steps.keystore.outputs.ks_pass }}
+        run: |
+          mkdir -p out
+          cp app-release-signed.apk app-release-bundle.aab assetlinks.json out/ 2>/dev/null || true
+          {
+            echo "MHD Prešov — Android build"
+            echo
+            echo "1. app-release-signed.apk — priama inštalácia do telefónu (sideload)."
+            echo "2. app-release-bundle.aab — nahraj v Google Play Console (Produkcia/Testovanie)."
+            echo "3. assetlinks.json — nahraj na https://auresa.sk/.well-known/assetlinks.json"
+            echo "   (inak sa appka otvára s viditeľnou lištou prehliadača)."
+            echo
+            if [ "$GENERATED" = "true" ]; then
+              echo "POZOR: bol vygenerovaný NOVÝ podpisový kľúč (android.keystore v tomto zipe,"
+              echo "heslo: $KS_PASS). Ulož si ho a nastav GitHub secrets:"
+              echo "  ANDROID_KEYSTORE_B64      = base64 -w0 android.keystore"
+              echo "  ANDROID_KEYSTORE_PASSWORD = heslo vyššie"
+              echo "Bez toho ďalší build nepodpíše aktualizáciu tým istým kľúčom."
+              cp android.keystore out/
+            fi
+          } > out/README.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mhd-presov-android
+          path: android/out/
+          retention-days: 30
