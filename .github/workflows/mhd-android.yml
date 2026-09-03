@@ -46,6 +46,10 @@ jobs:
           {"jdkPath": "$JAVA_HOME", "androidSdkPath": "$ANDROID_HOME"}
           EOF
           echo "JAVA_HOME=$JAVA_HOME  ANDROID_HOME=$ANDROID_HOME"
+          # bubblewrap ocakava staru strukturu SDK (tools/bin/sdkmanager)
+          sudo mkdir -p "$ANDROID_HOME/tools/bin"
+          sudo ln -sf "$ANDROID_HOME/cmdline-tools/latest/bin/"* "$ANDROID_HOME/tools/bin/"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
 
       - name: Lokalny server pre ikony a manifest
         run: |
