@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write # commit hotového APK do android/dist/
 
 jobs:
   build-android:
@@ -140,3 +140,19 @@ jobs:
           name: mhd-presov-android
           path: android/out/
           retention-days: 30
+
+      # APK aj do repa — na priame stiahnutie bez GitHub UI (push cez
+      # GITHUB_TOKEN nespúšťa workflowy, takže nehrozí slučka)
+      - name: Commit APK do android/dist
+        run: |
+          mkdir -p android/dist
+          cp android/app-release-signed.apk android/dist/mhd-presov.apk
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add android/dist/mhd-presov.apk
+          if git diff --cached --quiet; then
+            echo "APK bez zmeny."
+          else
+            git commit -m "mhd: android APK build ($(date -u +%F))"
+            git push
+          fi
