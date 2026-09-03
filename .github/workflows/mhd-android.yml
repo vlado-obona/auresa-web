@@ -3,7 +3,7 @@ name: MHD Presov - Android (TWA)
 # Zabalí PWA /mhd/ do Android aplikácie (Trusted Web Activity, Bubblewrap):
 #   - app-release-signed.apk  → priama inštalácia do telefónu (sideload)
 #   - app-release-bundle.aab  → nahratie do Google Play Console
-#   - assetlinks.json         → patrí na https://auresa.sk/.well-known/
+#   - assetlinks.json         → patrí na https://operatorsystem.sk/.well-known/
 #
 # Podpisový kľúč: ak existujú secrets ANDROID_KEYSTORE_B64 a
 # ANDROID_KEYSTORE_PASSWORD, použije sa stály kľúč (nutné pre aktualizácie
@@ -73,7 +73,7 @@ jobs:
             keytool -genkeypair -alias android -keyalg RSA -keysize 2048 \
               -validity 10000 -keystore android.keystore \
               -storepass "$KS_PASS" -keypass "$KS_PASS" \
-              -dname "CN=MHD Presov, O=auresa, L=Presov, C=SK"
+              -dname "CN=MHD Presov, O=operatorsystem, L=Presov, C=SK"
             echo "generated=true" >> "$GITHUB_OUTPUT"
             echo "VYGENEROVANY NOVY KLUC — uloz si ho zo build artefaktu!"
           fi
@@ -102,7 +102,7 @@ jobs:
             "relation": ["delegate_permission/common.handle_all_urls"],
             "target": {
               "namespace": "android_app",
-              "package_name": "sk.auresa.mhdpresov",
+              "package_name": "sk.operatorsystem.mhdpresov",
               "sha256_cert_fingerprints": ["$FP"]
             }
           }]
@@ -122,7 +122,7 @@ jobs:
             echo
             echo "1. app-release-signed.apk — priama inštalácia do telefónu (sideload)."
             echo "2. app-release-bundle.aab — nahraj v Google Play Console (Produkcia/Testovanie)."
-            echo "3. assetlinks.json — nahraj na https://auresa.sk/.well-known/assetlinks.json"
+            echo "3. assetlinks.json — nahraj na https://operatorsystem.sk/.well-known/assetlinks.json"
             echo "   (inak sa appka otvára s viditeľnou lištou prehliadača)."
             echo
             if [ "$GENERATED" = "true" ]; then
