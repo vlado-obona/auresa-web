@@ -1,0 +1,49 @@
+name: Deploy MHD app (operatorsystem.sk)
+
+# Nasadenie plánovača MHD Prešov (mhd-app/) na https://operatorsystem.sk/mhd/
+# cez SFTP (Websupport). Appka je nezávislá od webu auresa.sk — používa
+# vlastné secrets pre hosting operatorsystem.sk:
+#   MHD_SFTP_HOST, MHD_SFTP_PORT, MHD_SFTP_USER, MHD_SFTP_PASS
+#   MHD_SFTP_PATH  = webroot domény operatorsystem.sk (napr. /sub/operatorsystem)
+# Mirror je ADITÍVNY (bez --delete) a nasadzuje do podpriečinka /mhd —
+# existujúci obsah webu (landing na roote) sa nemení.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mhd-app/**'
+      - '.github/workflows/deploy-mhd.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Kontrola secrets
+        env:
+          H: ${{ secrets.MHD_SFTP_HOST }}
+        run: |
+          if [ -z "$H" ]; then
+            echo "::error::Chýbajú secrets MHD_SFTP_* pre hosting operatorsystem.sk — nastav ich v Settings → Secrets."
+            exit 1
+          fi
+
+      - name: Install lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Deploy cez SFTP
+        env:
+          SFTP_HOST: ${{ secrets.MHD_SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.MHD_SFTP_PORT }}
+          SFTP_USER: ${{ secrets.MHD_SFTP_USER }}
+          LFTP_PASSWORD: ${{ secrets.MHD_SFTP_PASS }}
+          SFTP_PATH: ${{ secrets.MHD_SFTP_PATH }}
+        run: |
+          lftp -u "$SFTP_USER" --env-password "sftp://$SFTP_HOST:${SFTP_PORT:-22}" -e "
+            set sftp:auto-confirm yes;
+            mkdir -p $SFTP_PATH/mhd;
+            mirror -R --parallel=4 --verbose mhd-app $SFTP_PATH/mhd;
+            bye"
+          echo "Nasadené na https://operatorsystem.sk/mhd/"
