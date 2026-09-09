@@ -8,6 +8,20 @@ motohodinu zábehu (obe hodnoty podľa manuálu KTM).
 
 Funguje kompletne offline, nič nenahráva ani neodosiela.
 
+## Stiahnutie hotového APK
+
+Každý push do `otackomer-android/` zostaví APK na GitHub Actions
+(`.github/workflows/otackomer-android.yml`) a pripne ho k Release
+**otackomer-latest**:
+
+https://github.com/vlado-obona/auresa-web/releases/tag/otackomer-latest
+
+Na telefóne stiahni `otackomer.apk`, povoľ inštaláciu z neznámych zdrojov
+a súbor otvor. APK je podpísané pevným kľúčom z `keystore/` (heslo
+`android`), takže novšia verzia sa nainštaluje cez staršiu bez
+odinštalovania. Kľúč nič nechráni – slúži len na konzistentný podpis, nie
+na distribúciu cez Google Play.
+
 ## Zostavenie
 
 Požiadavky: JDK 17 alebo novší, Android SDK s platformou 35 (Android Studio

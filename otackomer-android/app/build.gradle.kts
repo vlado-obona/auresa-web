@@ -20,8 +20,24 @@ android {
         resourceConfigurations += listOf("sk")
     }
 
+    // Pevný "debug" kľúč commitnutý v repe (heslo "android"): nechráni nič,
+    // len zaručí, že APK z CI aj z Android Studia majú rovnaký podpis a
+    // aktualizácia sa dá nainštalovať cez staršiu verziu bez odinštalovania.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = rootProject.file("keystore/otackomer-debug.jks")
+            storePassword = "android"
+            keyAlias = "otackomer"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
+        }
         release {
+            signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
