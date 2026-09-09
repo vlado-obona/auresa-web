@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Otáčkomer</string>
+    <string name="unit_rpm">ot./min</string>
+
+    <!-- stavový riadok -->
+    <string name="status_idle">Zapni motor a stlač Spustiť meranie</string>
+    <string name="status_stopped">Meranie zastavené</string>
+    <string name="status_listening">Počúvam…</string>
+    <string name="status_measuring">Meriam</string>
+    <string name="status_idle_band">Voľnobeh v predpísanom pásme</string>
+    <string name="status_weak">Slabý zvuk – priblíž telefón</string>
+    <string name="status_noisy">Priveľa hluku, hodnota zamrazená</string>
+    <string name="error_microphone">Mikrofón sa nepodarilo otvoriť – skús to znova</string>
+
+    <!-- štatistiky -->
+    <string name="stat_clarity">Zhoda signálu</string>
+    <string name="stat_peak">Max</string>
+    <string name="stat_source">Zdroj</string>
+    <string name="stat_source_fallback">%1$s (bez AGC/NS)</string>
+
+    <!-- ovládanie -->
+    <string name="button_start">Spustiť meranie</string>
+    <string name="button_stop">Zastaviť</string>
+    <string name="stroke_four">4T</string>
+    <string name="stroke_two">2T</string>
+
+    <!-- oprávnenie -->
+    <string name="permission_title">Prečo aplikácia potrebuje mikrofón?</string>
+    <string name="permission_rationale">Otáčky sa počítajú z rytmu zážihov v hluku motora. Aplikácia zvuk iba počúva – nič nenahráva, neukladá ani neodosiela, funguje úplne offline.</string>
+    <string name="permission_grant">Povoliť mikrofón</string>
+    <string name="permission_open_settings">Otvoriť nastavenia aplikácie</string>
+
+    <!-- pracovné pásmo -->
+    <string name="work_band_label">Pracovné pásmo</string>
+    <string name="work_band_low">od</string>
+    <string name="work_band_high">do</string>
+
+    <!-- info -->
+    <string name="info_idle_band">Sýte zelené pásmo 1 800 – 1 900 je predpísaný voľnobeh 500 EXC‑F podľa manuálu KTM. Červená čiara na 7 000 je strop pre prvú motohodinu zábehu.</string>
+    <string name="info_work_band">Svetlé pásmo je pracovný rozsah. KTM žiadne odporúčané pásmo pre 500 EXC‑F nezverejňuje, takže predvolených 3 500 – 7 000 je len rozumný štart pre tento 510 cm³ jednovalec – prestav si ho podľa toho, ako motorku reálne jazdíš.</string>
+    <string name="info_placement">Telefón drž asi pol metra od koncovky výfuku, nie priamo v prúde plynov. Meranie je najpresnejšie na ustálených otáčkach.</string>
+    <string name="info_freeze">Ak zhoda signálu klesne pod 40 % alebo je zvuk príliš slabý, číslo sa zamrazí – vtedy je okolo priveľa hluku alebo je motorka ďaleko.</string>
+
+    <!-- prístupnosť -->
+    <string name="a11y_rpm">Otáčky %1$d za minútu</string>
+    <string name="a11y_rpm_none">Otáčky zatiaľ nie sú známe</string>
+    <string name="a11y_level">Vstupná úroveň %1$d percent</string>
+    <string name="a11y_scale">Stupnica otáčok 0 až 10 000 s pásmom voľnobehu a stropom zábehu</string>
+    <string name="a11y_chart">Priebeh otáčok za posledných 60 sekúnd</string>
+    <string name="a11y_stroke_group">Typ motora</string>
+</resources>
