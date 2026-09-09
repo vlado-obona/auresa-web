@@ -41,3 +41,10 @@ Na serveri raz: `composer install` v `api/` + vytvor `.env` (vzor `.env.example`
 
 ## Tajomstvá
 Nikdy necommituj `.env`. Vzor je v `.env.example` (len placeholdery).
+
+## Otáčkomer (Android)
+
+V priečinku `otackomer-android/` je samostatná natívna Android aplikácia
+(Kotlin + Jetpack Compose), ktorá meria otáčky jednovalca z mikrofónu.
+Nesúvisí s webom auresa.sk – má vlastný Gradle projekt a vlastný README
+s postupom zostavenia (`./gradlew assembleDebug`).
