@@ -21,20 +21,28 @@ jobs:
         run: |
           set +e
           UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128 Safari/537.36"
-          c() { curl -sSL -A "$UA" --connect-timeout 10 --max-time 90 "$@"; }
+          c() { # opakovanie — dpmp.sk z niektorych regionov Azure obcas neodpovie
+            for n in 1 2 3 4 5; do
+              curl -sSL -A "$UA" --connect-timeout 20 --max-time 120 "$@" && return 0
+              echo "  pokus $n zlyhal, cakam" >&2; sleep $((n*6))
+            done; return 1
+          }
+          dp() { # $1 = cesta na dpmp.sk, $2 = vystupny subor
+            c -o "$2" "https://www.dpmp.sk$1" || c -o "$2" "https://dpmp.sk$1" || c -o "$2" "http://www.dpmp.sk$1"
+          }
           which pdftotext || (sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils)
           OUT=data/dpmp-lcp; mkdir -p $OUT
-          c -o $OUT/news-1519.html "https://www.dpmp.sk/news-zmeny-v-cestovnych-poriadkoch-23-spojov-mhd-od-1-oktobra-2026-1519.html"
+          dp "/news-zmeny-v-cestovnych-poriadkoch-23-spojov-mhd-od-1-oktobra-2026-1519.html" $OUT/news-1519.html
           sed 's/<script.*<\/script>//g; s/<[^>]*>/\n/g' $OUT/news-1519.html | sed 's/&nbsp;/ /g' | tr -s ' \t' ' ' | grep -v '^ *$' > $OUT/news-1519.txt
           echo "===== oznam (text)"; grep -n -iE 'spoj|linka|odchod|[0-9]{1,2}:[0-9]{2}|okt' $OUT/news-1519.txt | head -80
           grep -oiE 'href="[^"]+\.(pdf|xlsx?|zip)"' $OUT/news-1519.html | sort -u
-          c -o $OUT/cestovne-poriadky.html https://www.dpmp.sk/cestovne-poriadky
+          dp /cestovne-poriadky $OUT/cestovne-poriadky.html
           echo "===== odkazy na subory"
           grep -oiE 'href="[^"]+\.(pdf|xlsx?|zip|csv)"' $OUT/cestovne-poriadky.html | sort -u | head -60
           PDF=$(grep -oiE 'href="[^"]*LCP[^"]*2026-10-01[^"]*\.pdf"' $OUT/cestovne-poriadky.html | head -1 | sed 's/^href="//; s/"$//; s/ /%20/g')
           echo "PDF href: $PDF"
           case "$PDF" in http*) URL="$PDF" ;; /*) URL="https://www.dpmp.sk$PDF" ;; *) URL="https://www.dpmp.sk/$PDF" ;; esac
-          c -o $OUT/LCP-2026-10-01.pdf "$URL"
+          [ -n "$PDF" ] && c -o $OUT/LCP-2026-10-01.pdf "$URL"
           ls -la $OUT; file $OUT/LCP-2026-10-01.pdf
           pdfinfo $OUT/LCP-2026-10-01.pdf | head -20
           pdftotext -layout $OUT/LCP-2026-10-01.pdf $OUT/LCP-2026-10-01.layout.txt
@@ -49,6 +57,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          [ -s data/dpmp-lcp/LCP-2026-10-01.pdf ] || { echo "::error::PDF sa nestiahlo"; exit 1; }
           git add data/dpmp-lcp
           git commit -m "mhd: oficialne podklady DPMP k CP od 1.10.2026 (LCP pdf + oznam)" || exit 0
           git pull --rebase origin "$GITHUB_REF_NAME" || true
