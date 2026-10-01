@@ -1,0 +1,53 @@
+name: MHD Presov - GTFS probe
+
+# Dočasný prieskum: kde DPMP zverejnil nové cestovné poriadky (feed na
+# zrkadle transiq je stále septembrový). Výstup len do logu.
+on:
+  push:
+    branches: [claude/presov-mhd-planner-app-xnl2ew]
+    paths:
+      - '.github/workflows/mhd-gtfs-probe.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prieskum zdrojov GTFS
+        run: |
+          set +e
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128 Safari/537.36"
+          c() { curl -sSL -A "$UA" --connect-timeout 10 --max-time 40 "$@"; }
+          feedinfo() { # $1 = url
+            rm -rf z f.zip; c -o f.zip "$1" && file f.zip | grep -qi zip || { echo "  (nie je zip)"; return; }
+            mkdir z && unzip -q -o f.zip -d z
+            echo "  sha256: $(sha256sum f.zip | cut -c1-16)  size: $(stat -c%s f.zip)"
+            [ -f z/feed_info.txt ] && sed 's/^/  feed_info: /' z/feed_info.txt
+            for f in calendar.txt calendar_dates.txt; do
+              [ -f z/$f ] && echo "  $f dates: $(cut -d, -f2- z/$f | grep -oE '20[0-9]{6}' | sort -u | sed -n '1p;$p' | tr '\n' ' ')"
+            done
+          }
+          echo "===== transiq: hlavicky + feed_info"
+          c -I https://transiq.xhyrom.dev/gtfs/sk/dpmp.zip | grep -iE 'HTTP/|last-modified|etag|date:|content-length'
+          feedinfo https://transiq.xhyrom.dev/gtfs/sk/dpmp.zip
+          for u in https://transiq.xhyrom.dev/ https://transiq.xhyrom.dev/gtfs/sk/ https://transiq.xhyrom.dev/api/feeds https://transiq.xhyrom.dev/feeds.json https://transiq.xhyrom.dev/gtfs/sk/index.json; do
+            echo "===== $u"; c "$u" | head -c 2500; echo
+          done
+
+          echo "===== Mobility Database katalog (Presov/DPMP)"
+          c -o mdb.csv https://files.mobilitydatabase.org/feeds_v2.csv
+          head -1 mdb.csv
+          grep -iE 'pre[sš]ov|dpmp' mdb.csv | head -20
+          for u in $(grep -iE 'pre[sš]ov|dpmp' mdb.csv | grep -oE 'https?://[^,"]+\.zip[^,"]*|https?://[^,"]+gtfs[^,"]*' | sort -u | head -8); do
+            echo "--- MDB url: $u"; feedinfo "$u"
+          done
+
+          echo "===== dpmp.sk (novinky, cestovne poriadky)"
+          for u in https://www.dpmp.sk/ https://www.dpmp.sk/cestovne-poriadky https://www.dpmp.sk/aktuality https://www.dpmp.sk/oznamy; do
+            echo "--- $u"; c -o p.html "$u"; echo "  bytes: $(stat -c%s p.html 2>/dev/null)"
+            sed 's/<[^>]*>/ /g' p.html | tr -s ' \t' ' ' | grep -iE '(okt[oó]br|1\. ?10\.|od 1\.|platn|nov[ée] cestovn|zmen[ay] cestovn|gtfs|google)' | head -25 | cut -c1-260
+            grep -oiE 'href="[^"]*(gtfs|\.zip|cestovn|poriad|aktual|oznam|zmen|okt)[^"]*"' p.html | sort -u | head -30
+          done
+
+          echo "===== zive data DPMP (egov.presov.sk) — planovane starty dnes"
+          c -o live.csv https://egov.presov.sk/GeoDataKatalog/dpmp.csv
+          head -3 live.csv; echo "  riadkov: $(wc -l < live.csv)"
