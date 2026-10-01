@@ -39,7 +39,8 @@ jobs:
           dp /cestovne-poriadky $OUT/cestovne-poriadky.html
           echo "===== odkazy na subory"
           grep -oiE 'href="[^"]+\.(pdf|xlsx?|zip|csv)"' $OUT/cestovne-poriadky.html | sort -u | head -60
-          PDF=$(grep -oiE 'href="[^"]*LCP[^"]*2026-10-01[^"]*\.pdf"' $OUT/cestovne-poriadky.html | head -1 | sed 's/^href="//; s/"$//; s/ /%20/g')
+          echo "===== okolie LCP"; grep -n -i -B3 -A3 'LCP' $OUT/cestovne-poriadky.html | head -40
+          PDF=$(grep -i -A2 -B2 'LCP' $OUT/cestovne-poriadky.html | grep -oiE "(href|src|data-[a-z]+)=[\"'][^\"']+" | sed -E "s/^[a-z-]+=[\"']//" | grep -iE '\.pdf|lcp|2026' | head -1 | sed 's/ /%20/g')
           echo "PDF href: $PDF"
           case "$PDF" in http*) URL="$PDF" ;; /*) URL="https://www.dpmp.sk$PDF" ;; *) URL="https://www.dpmp.sk/$PDF" ;; esac
           [ -n "$PDF" ] && c -o $OUT/LCP-2026-10-01.pdf "$URL"
@@ -57,7 +58,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          [ -s data/dpmp-lcp/LCP-2026-10-01.pdf ] || { echo "::error::PDF sa nestiahlo"; exit 1; }
+          [ -s data/dpmp-lcp/LCP-2026-10-01.pdf ] || echo "::warning::PDF sa nestiahlo — ukladam aspon oznam"
+          [ -s data/dpmp-lcp/news-1519.txt ] || { echo "::error::nic sa nestiahlo"; exit 1; }
           git add data/dpmp-lcp
           git commit -m "mhd: oficialne podklady DPMP k CP od 1.10.2026 (LCP pdf + oznam)" || exit 0
           git pull --rebase origin "$GITHUB_REF_NAME" || true
