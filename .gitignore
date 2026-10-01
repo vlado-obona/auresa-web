@@ -28,3 +28,8 @@ android/assetlinks.json
 android/gradle*
 android/settings.gradle
 android/store_icon.png
+
+# MHD: diagnostické výstupy porovnania PDF↔GTFS (generujú lcp-compare/lcp-diff)
+__pycache__/
+data/dpmp-lcp/compare.json
+data/dpmp-lcp/diff.json
