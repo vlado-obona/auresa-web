@@ -9,7 +9,8 @@ import sk.rallysupport.otackomer.dsp.StrokeType.TWO_STROKE
  * Pravidlá pre údaje:
  *  - hodnota sa sem dostane len s menom manuálu, z ktorého pochádza;
  *  - `verified = true` iba vtedy, keď ju niekto videl priamo v manuáli;
- *  - ročníky sa nedopĺňajú odhadom – ak je overený len jeden rok, je tu len ten rok.
+ *  - ročníky sa nedopĺňajú odhadom – ak je overený len jeden rok, je tu len ten rok;
+ *  - `source` je názov manuálu po anglicky, aplikácia ho ukazuje v oboch jazykoch.
  *
  * Nový model = nový [BikeModel] s unikátnym [BikeModel.id] (ukladá sa do
  * nastavení, preto sa id existujúcich modelov nemenia).
@@ -28,7 +29,7 @@ object MotorcycleCatalog {
                     strokeType = FOUR_STROKE,
                     displacementCc = 349.7,
                     idle = IdleSpec(1_950, 2_050),
-                    source = "KTM Owner's manual 350 EXC‑F 2018 (3213648en) a 2022",
+                    source = "KTM Owner's manual 350 EXC‑F 2018 (3213648en) & 2022",
                     verified = false,
                 ),
             ),
@@ -83,7 +84,7 @@ object MotorcycleCatalog {
                     strokeType = FOUR_STROKE,
                     displacementCc = null,
                     idle = IdleSpec(2_250, 2_350),
-                    source = "KTM Owner's manual 450 SX‑F 2020 (3214005en) a 2021",
+                    source = "KTM Owner's manual 450 SX‑F 2020 (3214005en) & 2021",
                     verified = false,
                 ),
             ),
@@ -242,7 +243,7 @@ object MotorcycleCatalog {
                     strokeType = TWO_STROKE,
                     displacementCc = 249.32,
                     idle = IdleSpec(2_100, 2_300),
-                    source = "Sherco Owner's manual 2021 250/300 SE Racing/Factory (2 200 ± 100)",
+                    source = "Sherco Owner's manual 2021 250/300 SE Racing/Factory (2200 ± 100)",
                     verified = false,
                 ),
             ),
@@ -257,7 +258,7 @@ object MotorcycleCatalog {
                     strokeType = TWO_STROKE,
                     displacementCc = 293.14,
                     idle = IdleSpec(2_100, 2_300),
-                    source = "Sherco Owner's manual 2021 250/300 SE Racing/Factory (2 200 ± 100)",
+                    source = "Sherco Owner's manual 2021 250/300 SE Racing/Factory (2200 ± 100)",
                     verified = false,
                 ),
             ),
@@ -338,7 +339,7 @@ object MotorcycleCatalog {
                     strokeType = FOUR_STROKE,
                     displacementCc = null,
                     idle = IdleSpec(1_900, 2_100),
-                    source = "Honda CRF250R Owner's manual 2018 a 2022 CRF250R/RX (2 000 ± 100)",
+                    source = "Honda CRF250R Owner's manual 2018 & 2022 CRF250R/RX (2000 ± 100)",
                     verified = false,
                 ),
             ),
@@ -353,7 +354,7 @@ object MotorcycleCatalog {
                     strokeType = FOUR_STROKE,
                     displacementCc = null,
                     idle = IdleSpec(1_700, 1_900),
-                    source = "Honda CRF450L 2019 Owner's manual (1 800 ± 100)",
+                    source = "Honda CRF450L 2019 Owner's manual (1800 ± 100)",
                     verified = false,
                 ),
             ),
@@ -368,7 +369,7 @@ object MotorcycleCatalog {
                     strokeType = FOUR_STROKE,
                     displacementCc = null,
                     idle = IdleSpec(1_700, 1_900),
-                    source = "Honda CRF450RL Owner's manual 2021 a 2024 (1 800 ± 100)",
+                    source = "Honda CRF450RL Owner's manual 2021 & 2024 (1800 ± 100)",
                     verified = false,
                 ),
             ),
@@ -383,7 +384,7 @@ object MotorcycleCatalog {
                     strokeType = FOUR_STROKE,
                     displacementCc = null,
                     idle = IdleSpec(1_200, 1_400),
-                    source = "Honda XR650L Owner's manual 2018 a 2019 (1 300 ± 100)",
+                    source = "Honda XR650L Owner's manual 2018 & 2019 (1300 ± 100)",
                     verified = false,
                 ),
             ),
@@ -400,7 +401,7 @@ object MotorcycleCatalog {
                     strokeType = FOUR_STROKE,
                     displacementCc = null,
                     idle = IdleSpec(1_900, 2_100),
-                    source = "Yamaha YZ250F 2024 Owner's service manual (motor zahriaty, chladivo 70–80 °C)",
+                    source = "Yamaha YZ250F 2024 Owner's service manual (engine warm, coolant 70–80 °C)",
                     verified = false,
                 ),
             ),

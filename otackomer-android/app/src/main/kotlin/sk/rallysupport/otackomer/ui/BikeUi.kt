@@ -59,13 +59,10 @@ import java.util.Locale
 fun formatIdle(idle: IdleSpec): String =
     if (idle.isSingleValue) formatRpm(idle.low) else "${formatRpm(idle.low)} – ${formatRpm(idle.high)}"
 
-private val CcFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("sk")).apply {
-    maximumFractionDigits = 1
-}
+fun formatCc(cc: Double): String =
+    NumberFormat.getNumberInstance(Locale.getDefault()).apply { maximumFractionDigits = 1 }.format(cc)
 
-fun formatCc(cc: Double): String = CcFormat.format(cc)
-
-/** „KTM 500 EXC‑F, ročník 2018“ alebo „Vlastný motocykel“. */
+/** „KTM 500 EXC‑F, ročník 2018“ alebo „Vlastný motocykel“ (podľa jazyka). */
 @Composable
 fun bikeDisplayName(bike: BikeProfile): String =
     if (bike.isCustom || bike.name == null || bike.year == null) {

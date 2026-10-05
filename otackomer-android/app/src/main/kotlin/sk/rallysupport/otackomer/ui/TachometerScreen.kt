@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -62,6 +63,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import sk.rallysupport.otackomer.AppLanguage
 import sk.rallysupport.otackomer.R
 import sk.rallysupport.otackomer.bike.BikeProfile
 import sk.rallysupport.otackomer.bike.IdleSpec
@@ -73,10 +75,8 @@ import sk.rallysupport.otackomer.ui.theme.OtackomerPalette
 import java.text.NumberFormat
 import java.util.Locale
 
-private val SlovakNumbers: NumberFormat = NumberFormat.getIntegerInstance(Locale.forLanguageTag("sk"))
-
-/** Formát „1 850“. */
-fun formatRpm(value: Int): String = SlovakNumbers.format(value.toLong())
+/** Formát podľa jazyka aplikácie: „1 850“ po slovensky, „1,850“ po anglicky. */
+fun formatRpm(value: Int): String = NumberFormat.getIntegerInstance(Locale.getDefault()).format(value.toLong())
 
 /** Tabulárne číslice – hodnota neskáče do šírky pri zmene číslic. */
 private val TabularNumbers = TextStyle(fontFeatureSettings = "tnum")
@@ -91,6 +91,7 @@ fun TachometerScreen(
     onStrokeType: (StrokeType) -> Unit,
     onWorkBand: (Int, Int) -> Unit,
     onOpenBikePicker: () -> Unit,
+    onLanguage: (String) -> Unit,
 ) {
     val palette = OtackomerColors.current
     val insets = WindowInsets.safeDrawing.asPaddingValues()
@@ -133,6 +134,9 @@ fun TachometerScreen(
 
         Spacer(Modifier.height(18.dp))
         InfoText(state.bike)
+
+        Spacer(Modifier.height(18.dp))
+        LanguageSelector(onLanguage)
         Spacer(Modifier.height(8.dp))
     }
 }
@@ -375,7 +379,7 @@ private fun StatsRow(state: TachometerUiState) {
     ) {
         Stat(
             label = stringResource(R.string.stat_clarity),
-            value = state.clarity?.let { "${(it * 100).toInt()} %" } ?: "–",
+            value = state.clarity?.let { stringResource(R.string.stat_percent, (it * 100).toInt()) } ?: "–",
             palette = palette,
         )
         Stat(
@@ -483,6 +487,44 @@ internal fun StrokeSelector(selected: StrokeType, enabled: Boolean, onSelect: (S
                 modifier = Modifier.widthIn(min = 64.dp),
             ) {
                 Text(label, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------- jazyk
+
+/** Prepínač jazyka aplikácie; názvy jazykov sú vždy v ich vlastnom jazyku. */
+@Composable
+private fun LanguageSelector(onSelect: (String) -> Unit) {
+    val palette = OtackomerColors.current
+    val current = AppLanguage.current(LocalConfiguration.current)
+    val options = listOf("sk" to "Slovenčina", "en" to "English")
+    Column {
+        Text(
+            stringResource(R.string.language_label),
+            color = palette.muted,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Spacer(Modifier.height(6.dp))
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth().height(48.dp)) {
+            options.forEachIndexed { index, (tag, label) ->
+                SegmentedButton(
+                    selected = tag == current,
+                    onClick = { if (tag != current) onSelect(tag) },
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size, baseShape = RoundedCornerShape(6.dp)),
+                    colors = SegmentedButtonDefaults.colors(
+                        activeContainerColor = palette.line,
+                        activeContentColor = palette.ink,
+                        inactiveContainerColor = palette.panel,
+                        inactiveContentColor = palette.muted,
+                        activeBorderColor = palette.line,
+                        inactiveBorderColor = palette.line,
+                    ),
+                    icon = {},
+                ) {
+                    Text(label, fontSize = 15.sp, fontWeight = FontWeight.Medium)
+                }
             }
         }
     }

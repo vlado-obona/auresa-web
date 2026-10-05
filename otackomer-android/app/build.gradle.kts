@@ -14,10 +14,10 @@ android {
         applicationId = "sk.rallysupport.otackomer"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.1"
-        // Aplikácia je len po slovensky – ostatné jazyky netreba baliť.
-        resourceConfigurations += listOf("sk")
+        versionCode = 3
+        versionName = "1.2"
+        // Aplikácia je po anglicky (predvolené) a po slovensky – ostatné jazyky netreba baliť.
+        resourceConfigurations += listOf("en", "sk")
     }
 
     // Pevný "debug" kľúč commitnutý v repe (heslo "android"): nechráni nič,

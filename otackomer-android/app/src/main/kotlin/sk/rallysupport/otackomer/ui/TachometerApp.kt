@@ -35,6 +35,7 @@ import sk.rallysupport.otackomer.data.Settings as AppSettings
 fun TachometerApp(
     viewModel: TachometerViewModel,
     onKeepScreenOn: (Boolean) -> Unit,
+    onLanguage: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -106,6 +107,7 @@ fun TachometerApp(
         onStrokeType = viewModel::setStrokeType,
         onWorkBand = viewModel::setWorkBand,
         onOpenBikePicker = { showBikePicker = true },
+        onLanguage = onLanguage,
     )
 }
 

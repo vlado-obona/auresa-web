@@ -10,6 +10,8 @@ Dnes si v aplikácii vyberieš značku, model a ročník motocykla a stupnica,
 zelené pásmo aj typ motora (4T/2T) sa nastavia podľa neho. Motocykel, ktorý
 v katalógu nie je, zadáš ako vlastný s voľnobehom z jeho manuálu.
 
+Aplikácia je po anglicky aj po slovensky (prepínač na spodku obrazovky).
+
 Funguje kompletne offline, nič nenahráva ani neodosiela.
 
 ## Stiahnutie hotového APK
@@ -141,7 +143,25 @@ Pre cieľový 4‑taktný motor to nevadí (perióda je dvojnásobná).
 * Počas merania drží obrazovku zapnutú (`FLAG_KEEP_SCREEN_ON`).
 * Tmavá paleta je primárna, svetlý režim sleduje systém. Ak má používateľ
   v systéme vypnuté animácie, ukazovateľ sa neanimuje.
-* Slovenské texty, popisky pre čítačku obrazovky.
+* Anglické a slovenské texty, popisky pre čítačku obrazovky. Pozri
+  [Jazyky](#jazyky).
+
+## Jazyky
+
+* `res/values/strings.xml` je angličtina – predvolený jazyk pre telefóny
+  v akomkoľvek inom jazyku než slovenčine.
+* `res/values-sk/strings.xml` je slovenčina; telefón v slovenčine ju
+  dostane automaticky.
+* Na spodku hlavnej obrazovky je prepínač **Slovenčina / English**, ktorý
+  zmení jazyk len pre túto aplikáciu (`AppLanguage.kt`). Na Androide 13+
+  ide cez systémový `LocaleManager` – rovnaká voľba je aj v Nastavenia →
+  Aplikácie → Otáčkomer → Jazyk (`res/xml/locales_config.xml`). Na
+  starších verziách sa voľba uloží do `SharedPreferences` a aktivita si
+  jazyk nastaví v `attachBaseContext`.
+* Čísla sa formátujú podľa zvoleného jazyka (`1 850` / `1,850`).
+* Mená manuálov v katalógu (`source`) sú po anglicky a zobrazujú sa
+  v oboch jazykoch.
+* Nový text = kľúč v oboch súboroch `strings.xml`.
 
 ## Katalóg motocyklov
 
@@ -181,6 +201,7 @@ Africa Twin) v katalógu zámerne nie sú.
 ```
 app/src/main/kotlin/sk/rallysupport/otackomer/
   MainActivity.kt            jedna Activity, keep-screen-on, stop na pozadí
+  AppLanguage.kt             jazyk aplikácie (SK/EN) nezávisle od systému
   audio/AudioCapture.kt      AudioRecord + výber zdroja + vypnutie efektov
   dsp/EnvelopeExtractor.kt   usmernenie, LP 120 Hz, decimácia, kruhový buffer
   dsp/RpmEstimator.kt        NSDF, prvý vrchol nad prahom, parabola
