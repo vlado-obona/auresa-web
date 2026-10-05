@@ -41,6 +41,27 @@ import { GA4_ID, GTM_ID } from '../data/site';
     const isProd = PROD_HOSTS.indexOf(location.hostname) !== -1;   // GA4 gate
     const MAX_AGE_MS = 365 * 24 * 3600 * 1000;                     // obnova súhlasu ~12 mes.
     const GA_DISABLE = 'ga-disable-' + GA4_ID;
+
+    // ── CONSENT MODE v2 ──
+    // Signály musia byť v dataLayer SKÔR, než sa načíta gtag.js/gtm.js — tagy čítajú
+    // dataLayer od začiatku, takže 'default' spracujú ako prvý príkaz. Bez ad_user_data
+    // a ad_personalization nevie Google Ads priradiť konverzie z GA4 (EHP, od 3/2024)
+    // — to bola príčina stavu „Nesprávne nakonfigurované" / 0 konverzií.
+    // Vlastný push (nie window.gtag), aby auTrack ostal viazaný na reálny súhlas:
+    // window.gtag definuje až loadGA4(), takže pred súhlasom sa do GA4 nezaradí nič.
+    window.dataLayer = window.dataLayer || [];
+    function gtagCmd() { window.dataLayer.push(arguments); }
+    gtagCmd('consent', 'default', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      functionality_storage: 'denied',
+      personalization_storage: 'denied',
+      security_storage: 'granted',
+      wait_for_update: 500,
+    });
+
     const banner = document.querySelector('[data-cookie]');
     const cbA = banner && banner.querySelector('[data-cookie-cat="analytics"]');
     const cbM = banner && banner.querySelector('[data-cookie-cat="marketing"]');
@@ -110,6 +131,15 @@ import { GA4_ID, GTM_ID } from '../data/site';
 
     // aplikuj rozhodnutie po kategóriách (init aj zmena)
     function apply(a, m) {
+      // Consent update MUSÍ ísť do dataLayer pred načítaním tagov, nech ich gtag.js/gtm.js
+      // pri inicializácii prečítajú v poradí default → update.
+      // Mapovanie kategórií: analytics → analytics_storage; marketing → reklamné signály.
+      gtagCmd('consent', 'update', {
+        analytics_storage: a === 'granted' ? 'granted' : 'denied',
+        ad_storage: m === 'granted' ? 'granted' : 'denied',
+        ad_user_data: m === 'granted' ? 'granted' : 'denied',
+        ad_personalization: m === 'granted' ? 'granted' : 'denied',
+      });
       if (a === 'granted') loadGA4(); else { disableGA(); deleteGA(); }
       if (m === 'granted') loadGTM(); else disableMarketing();
     }

@@ -21,12 +21,19 @@
     }
     window.auTrack = auTrack;
 
+    // Popis odkazu, nech sa v GA4 dá rozlíšiť, ktorý kontakt sa klikol
+    // (hero vs. pätička vs. FAQ). GA4 orezáva textové parametre na 100 znakov.
+    function linkText(el) {
+      var t = el.textContent || el.getAttribute('aria-label') || '';
+      return t.replace(/\s+/g, ' ').trim().slice(0, 100);
+    }
+
     document.addEventListener('click', function (e) {
       var a = e.target instanceof Element ? e.target.closest('a, [data-cta]') : null;
       if (!a) return;
       var href = a.getAttribute('href') || '';
-      if (href.indexOf('tel:') === 0) auTrack('tel_click', { link_url: href });
-      else if (href.indexOf('mailto:') === 0) auTrack('mailto_click', { link_url: href });
+      if (href.indexOf('tel:') === 0) auTrack('tel_click', { link_url: href, link_text: linkText(a) });
+      else if (href.indexOf('mailto:') === 0) auTrack('mailto_click', { link_url: href, link_text: linkText(a) });
       var cta = a.getAttribute('data-cta');
       if (cta) auTrack('cta_click', { cta: cta, location: location.pathname });
     });
