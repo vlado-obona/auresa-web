@@ -63,6 +63,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import sk.rallysupport.otackomer.R
+import sk.rallysupport.otackomer.bike.BikeProfile
+import sk.rallysupport.otackomer.bike.IdleSpec
 import sk.rallysupport.otackomer.data.Settings
 import sk.rallysupport.otackomer.dsp.SignalStatus
 import sk.rallysupport.otackomer.dsp.StrokeType
@@ -88,6 +90,7 @@ fun TachometerScreen(
     onRequestPermission: () -> Unit,
     onStrokeType: (StrokeType) -> Unit,
     onWorkBand: (Int, Int) -> Unit,
+    onOpenBikePicker: () -> Unit,
 ) {
     val palette = OtackomerColors.current
     val insets = WindowInsets.safeDrawing.asPaddingValues()
@@ -100,6 +103,9 @@ fun TachometerScreen(
             .padding(insets)
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
+        BikeCard(state.bike, onOpenBikePicker)
+
+        Spacer(Modifier.height(14.dp))
         StatusRow(state)
 
         Spacer(Modifier.height(18.dp))
@@ -126,7 +132,7 @@ fun TachometerScreen(
         WorkBandSettings(state.workBandLow, state.workBandHigh, onWorkBand)
 
         Spacer(Modifier.height(18.dp))
-        InfoText()
+        InfoText(state.bike)
         Spacer(Modifier.height(8.dp))
     }
 }
@@ -235,6 +241,8 @@ private fun RpmScale(state: TachometerUiState) {
     val labelStyle = TextStyle(color = palette.muted, fontSize = 11.sp, fontFeatureSettings = "tnum")
     val scaleMax = TachometerUiState.SCALE_MAX.toFloat()
 
+    val idleBand = state.bike.idle?.acceptBand
+    val runInLimit = state.bike.runInLimit
     val showNeedle = state.running && state.rpm != null
     val target = ((state.rpm ?: 0).toFloat() / scaleMax).coerceIn(0f, 1f)
     val needlePos = if (reducedMotion) target else animateFloatAsState(target, tween(120), label = "needle").value
@@ -261,15 +269,19 @@ private fun RpmScale(state: TachometerUiState) {
             Size(x(state.workBandHigh) - x(state.workBandLow), trackHeight),
         )
         // predpísaný voľnobeh (sýte)
-        val idleLeft = x(TachometerUiState.IDLE_BAND_LOW)
-        val idleRight = x(TachometerUiState.IDLE_BAND_HIGH)
-        drawRect(palette.good.copy(alpha = 0.32f), Offset(idleLeft, trackTop), Size(idleRight - idleLeft, trackHeight))
-        drawLine(palette.good, Offset(idleLeft, trackTop), Offset(idleLeft, trackTop + trackHeight), 1.dp.toPx())
-        drawLine(palette.good, Offset(idleRight, trackTop), Offset(idleRight, trackTop + trackHeight), 1.dp.toPx())
+        idleBand?.let { band ->
+            val idleLeft = x(band.first)
+            val idleRight = x(band.last)
+            drawRect(palette.good.copy(alpha = 0.32f), Offset(idleLeft, trackTop), Size(idleRight - idleLeft, trackHeight))
+            drawLine(palette.good, Offset(idleLeft, trackTop), Offset(idleLeft, trackTop + trackHeight), 1.dp.toPx())
+            drawLine(palette.good, Offset(idleRight, trackTop), Offset(idleRight, trackTop + trackHeight), 1.dp.toPx())
+        }
 
-        // strop zábehu
-        val limitX = x(TachometerUiState.RUN_IN_LIMIT)
-        drawLine(palette.limit, Offset(limitX, trackTop), Offset(limitX, trackTop + trackHeight), 2.dp.toPx())
+        // strop zábehu, ak ho manuál uvádza
+        runInLimit?.let { limit ->
+            val limitX = x(limit)
+            drawLine(palette.limit, Offset(limitX, trackTop), Offset(limitX, trackTop + trackHeight), 2.dp.toPx())
+        }
 
         // dieliky
         val labelTop = trackTop + trackHeight + 6.dp.toPx()
@@ -301,6 +313,8 @@ private fun HistoryChart(state: TachometerUiState) {
     val palette = OtackomerColors.current
     val scaleMax = TachometerUiState.SCALE_MAX.toFloat()
     val description = stringResource(R.string.a11y_chart)
+    val idleBand = state.bike.idle?.acceptBand
+    val runInLimit = state.bike.runInLimit
 
     Canvas(
         modifier = Modifier
@@ -314,13 +328,17 @@ private fun HistoryChart(state: TachometerUiState) {
         fun y(rpm: Float) = h - (rpm.coerceIn(0f, scaleMax) / scaleMax) * h
 
         // pásmo voľnobehu
-        val yHi = y(TachometerUiState.IDLE_BAND_HIGH.toFloat())
-        val yLo = y(TachometerUiState.IDLE_BAND_LOW.toFloat())
-        drawRect(palette.good.copy(alpha = 0.20f), Offset(0f, yHi), Size(w, yLo - yHi))
+        idleBand?.let { band ->
+            val yHi = y(band.last.toFloat())
+            val yLo = y(band.first.toFloat())
+            drawRect(palette.good.copy(alpha = 0.20f), Offset(0f, yHi), Size(w, yLo - yHi))
+        }
 
         // strop zábehu
-        val yLimit = y(TachometerUiState.RUN_IN_LIMIT.toFloat())
-        drawLine(palette.limit.copy(alpha = 0.6f), Offset(0f, yLimit), Offset(w, yLimit), 1.dp.toPx())
+        runInLimit?.let { limit ->
+            val yLimit = y(limit.toFloat())
+            drawLine(palette.limit.copy(alpha = 0.6f), Offset(0f, yLimit), Offset(w, yLimit), 1.dp.toPx())
+        }
 
         val history = state.history
         if (history.size < 2) return@Canvas
@@ -422,18 +440,22 @@ private fun Controls(
             }
         }
 
-        StrokeSelector(state.strokeType, onStrokeType)
+        StrokeSelector(state.strokeType, enabled = state.bike.isCustom, onSelect = onStrokeType)
     }
 }
 
 @Composable
-private fun StrokeSelector(selected: StrokeType, onSelect: (StrokeType) -> Unit) {
+internal fun StrokeSelector(selected: StrokeType, enabled: Boolean, onSelect: (StrokeType) -> Unit) {
     val palette = OtackomerColors.current
     val options = listOf(
         StrokeType.FOUR_STROKE to stringResource(R.string.stroke_four),
         StrokeType.TWO_STROKE to stringResource(R.string.stroke_two),
     )
-    val groupDescription = stringResource(R.string.a11y_stroke_group)
+    val groupDescription = if (enabled) {
+        stringResource(R.string.a11y_stroke_group)
+    } else {
+        stringResource(R.string.a11y_stroke_locked)
+    }
     SingleChoiceSegmentedButtonRow(
         modifier = Modifier.height(56.dp).semantics { contentDescription = groupDescription },
     ) {
@@ -441,6 +463,7 @@ private fun StrokeSelector(selected: StrokeType, onSelect: (StrokeType) -> Unit)
             SegmentedButton(
                 selected = type == selected,
                 onClick = { onSelect(type) },
+                enabled = enabled || type == selected,
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size, baseShape = RoundedCornerShape(6.dp)),
                 colors = SegmentedButtonDefaults.colors(
                     activeContainerColor = palette.line,
@@ -449,6 +472,12 @@ private fun StrokeSelector(selected: StrokeType, onSelect: (StrokeType) -> Unit)
                     inactiveContentColor = palette.muted,
                     activeBorderColor = palette.line,
                     inactiveBorderColor = palette.line,
+                    disabledActiveContainerColor = palette.line,
+                    disabledActiveContentColor = palette.ink,
+                    disabledActiveBorderColor = palette.line,
+                    disabledInactiveContainerColor = palette.panel,
+                    disabledInactiveContentColor = palette.weak,
+                    disabledInactiveBorderColor = palette.line,
                 ),
                 icon = {},
                 modifier = Modifier.widthIn(min = 64.dp),
@@ -512,7 +541,58 @@ private fun WorkBandSettings(low: Int, high: Int, onWorkBand: (Int, Int) -> Unit
         if (valid) onWorkBand(l, h)
     }
 
-    val fieldColors = OutlinedTextFieldDefaults.colors(
+    val fieldColors = rpmFieldColors()
+
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(stringResource(R.string.work_band_label), color = palette.muted, style = MaterialTheme.typography.bodyMedium)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            RpmField(
+                value = lowText,
+                label = stringResource(R.string.work_band_low),
+                colors = fieldColors,
+                onValueChange = { lowText = it; commit(lowText, highText) },
+            )
+            Text("–", color = palette.muted)
+            RpmField(
+                value = highText,
+                label = stringResource(R.string.work_band_high),
+                colors = fieldColors,
+                onValueChange = { highText = it; commit(lowText, highText) },
+            )
+        }
+    }
+}
+
+/** Číselné pole pre otáčky (len číslice, max. 5 znakov). */
+@Composable
+internal fun RpmField(
+    value: String,
+    label: String,
+    colors: androidx.compose.material3.TextFieldColors,
+    onValueChange: (String) -> Unit,
+) {
+    val palette = OtackomerColors.current
+    OutlinedTextField(
+        value = value,
+        onValueChange = { onValueChange(it.filter(Char::isDigit).take(5)) },
+        modifier = Modifier.width(112.dp),
+        singleLine = true,
+        textStyle = TabularNumbers.copy(textAlign = TextAlign.Center),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        colors = colors,
+        shape = RoundedCornerShape(4.dp),
+        label = { Text(label, color = palette.muted) },
+    )
+}
+
+/** Farby číselných polí v palete aplikácie. */
+@Composable
+internal fun rpmFieldColors(): androidx.compose.material3.TextFieldColors {
+    val palette = OtackomerColors.current
+    return OutlinedTextFieldDefaults.colors(
         focusedTextColor = palette.ink,
         unfocusedTextColor = palette.ink,
         focusedBorderColor = palette.live,
@@ -521,54 +601,39 @@ private fun WorkBandSettings(low: Int, high: Int, onWorkBand: (Int, Int) -> Unit
         focusedContainerColor = palette.panel,
         unfocusedContainerColor = palette.panel,
     )
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(stringResource(R.string.work_band_label), color = palette.muted, style = MaterialTheme.typography.bodyMedium)
-        OutlinedTextField(
-            value = lowText,
-            onValueChange = { lowText = it.filter(Char::isDigit).take(5); commit(lowText, highText) },
-            modifier = Modifier.width(96.dp),
-            singleLine = true,
-            textStyle = TabularNumbers.copy(textAlign = TextAlign.Center),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            colors = fieldColors,
-            shape = RoundedCornerShape(4.dp),
-            label = { Text(stringResource(R.string.work_band_low), color = palette.muted) },
-        )
-        Text("–", color = palette.muted)
-        OutlinedTextField(
-            value = highText,
-            onValueChange = { highText = it.filter(Char::isDigit).take(5); commit(lowText, highText) },
-            modifier = Modifier.width(96.dp),
-            singleLine = true,
-            textStyle = TabularNumbers.copy(textAlign = TextAlign.Center),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            colors = fieldColors,
-            shape = RoundedCornerShape(4.dp),
-            label = { Text(stringResource(R.string.work_band_high), color = palette.muted) },
-        )
-        Text(stringResource(R.string.unit_rpm), color = palette.muted, style = MaterialTheme.typography.bodyMedium)
-    }
 }
 
 // ---------------------------------------------------------------- info
 
 @Composable
-private fun InfoText() {
+private fun InfoText(bike: BikeProfile) {
     val palette = OtackomerColors.current
+    val paragraphs = buildList {
+        val idle = bike.idle
+        val bikeName = bikeDisplayName(bike)
+        when {
+            idle == null -> add(stringResource(R.string.info_idle_unknown, bikeName))
+            bike.isCustom -> add(stringResource(R.string.info_idle_custom, formatIdle(idle)))
+            else -> add(stringResource(R.string.info_idle_model, formatIdle(idle), bikeName))
+        }
+        if (idle != null && idle.isSingleValue) {
+            add(stringResource(R.string.info_idle_single, IdleSpec.SINGLE_VALUE_TOLERANCE))
+        }
+        bike.runInLimit?.let { add(stringResource(R.string.info_run_in, formatRpm(it))) }
+        add(stringResource(R.string.info_work_band))
+        add(stringResource(R.string.info_placement))
+        add(stringResource(R.string.info_freeze))
+        bike.source?.let { source ->
+            add(
+                if (bike.verified) stringResource(R.string.info_source, source)
+                else stringResource(R.string.info_source_unverified, source),
+            )
+        }
+    }
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        listOf(
-            R.string.info_idle_band,
-            R.string.info_work_band,
-            R.string.info_placement,
-            R.string.info_freeze,
-        ).forEach { res ->
+        paragraphs.forEach { text ->
             Text(
-                stringResource(res),
+                text,
                 color = palette.muted,
                 style = MaterialTheme.typography.bodyMedium,
                 lineHeight = 20.sp,

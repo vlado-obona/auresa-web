@@ -6,6 +6,10 @@ motora jednovalca zo zvuku. Vznikla na nastavenie voľnobehu KTM 500 EXC‑F
 voľnobehu 1 800 – 1 900 ot./min a červený strop 7 000 ot./min pre prvú
 motohodinu zábehu (obe hodnoty podľa manuálu KTM).
 
+Dnes si v aplikácii vyberieš značku, model a ročník motocykla a stupnica,
+zelené pásmo aj typ motora (4T/2T) sa nastavia podľa neho. Motocykel, ktorý
+v katalógu nie je, zadáš ako vlastný s voľnobehom z jeho manuálu.
+
 Funguje kompletne offline, nič nenahráva ani neodosiela.
 
 ## Stiahnutie hotového APK
@@ -118,20 +122,59 @@ Pre cieľový 4‑taktný motor to nevadí (perióda je dvojnásobná).
 
 ## Používateľské rozhranie
 
-* Obrovské číslo otáčok s tabulárnymi číslicami; v pásme 1 800 – 1 900
-  zozelenie.
+* Navrchu karta vybraného motocykla („KTM 500 EXC‑F, ročník 2018 ·
+  Voľnobeh 1 800 – 1 900 ot./min · 4T“). Ťuknutím sa otvorí výber
+  značka → model → ročník, alebo „Vlastné nastavenie“.
+* Obrovské číslo otáčok s tabulárnymi číslicami; v pásme predpísaného
+  voľnobehu vybraného motocykla zozelenie.
 * Vodorovná stupnica 0 – 10 000 s ukazovateľom, sýtym pásmom voľnobehu,
-  svetlým pracovným pásmom a červenou čiarou na 7 000.
+  svetlým pracovným pásmom a červenou čiarou stropu zábehu (len ak ho
+  manuál uvádza).
 * Pracovné pásmo (predvolene 3 500 – 7 000) si používateľ nastaví sám;
-  KTM pre tento motor žiadne odporúčané pásmo nezverejňuje, preto sa v UI
-  neprezentuje ako údaj od výrobcu. Ukladá sa cez DataStore.
+  výrobcovia ho väčšinou neuvádzajú, preto sa v UI neprezentuje ako údaj
+  od výrobcu. Ukladá sa cez DataStore.
 * Priebehový graf posledných 60 s, indikátor vstupnej úrovne, zhoda signálu
   v percentách, maximum, použitý zdroj zvuku.
-* Prepínač 4T / 2T, jedno veľké tlačidlo Spustiť / Zastaviť (64 dp).
+* Prepínač 4T / 2T (pri modeli z katalógu ho určuje model, ručne sa dá
+  meniť len pri vlastnom nastavení), jedno veľké tlačidlo Spustiť /
+  Zastaviť (64 dp).
 * Počas merania drží obrazovku zapnutú (`FLAG_KEEP_SCREEN_ON`).
 * Tmavá paleta je primárna, svetlý režim sleduje systém. Ak má používateľ
   v systéme vypnuté animácie, ukazovateľ sa neanimuje.
 * Slovenské texty, popisky pre čítačku obrazovky.
+
+## Katalóg motocyklov
+
+Údaje sú v `bike/MotorcycleCatalog.kt` (čistý Kotlin, žiadna databáza ani
+sieť). Každý záznam má rozsah ročníkov, typ motora, predpísaný voľnobeh,
+voliteľne strop zábehu a **meno manuálu, z ktorého hodnota pochádza**.
+
+Stav overenia:
+
+* **Overené** (`verified = true`): KTM 500 EXC‑F 2018 – 1 800 – 1 900
+  ot./min, zábeh do 7 000 ot./min, z manuálu KTM.
+* **Orientačné** (`verified = false`): všetky ostatné. Pri ich zbere bol
+  prístup na weby s manuálmi (ktmshop.se, manualslib.com, weby výrobcov)
+  z vývojového prostredia zablokovaný, takže hodnoty pochádzajú zo súhrnov
+  vyhľadávača, ktoré na konkrétny manuál odkazujú. Do katalógu sa dostali
+  len tie, kde sa aspoň dve rôzne formulované vyhľadávania zhodli; sporné,
+  slabé alebo bez známeho ročníka sú vynechané. Aplikácia ich označuje
+  slovom „orientačné“ a vyzve porovnať ich s manuálom.
+* Ročníky sa nedopĺňajú odhadom – ak bol potvrdený len jeden rok, v
+  katalógu je len ten rok. Nastavený ročník mimo katalógu sa priradí
+  k najbližšiemu pokrytému.
+
+Pokrytie (28 modelov): KTM (EXC‑F, SX‑F, EXC TPI), Husqvarna, GASGAS,
+Beta, Sherco, TM Racing, Fantic, Honda, Yamaha, Kawasaki.
+
+Pridanie modelu: nový `BikeModel` s unikátnym `id` (ukladá sa do
+nastavení, existujúce id preto nemeniť) a aspoň jedným `BikeVariant`.
+`MotorcycleCatalogTest` skontroluje unikátnosť id, neprekrývajúce sa
+ročníky a rozumné rozsahy hodnôt. Keď overíš hodnotu priamo v manuáli,
+zmeň `verified` na `true`.
+
+Pozor: algoritmus počíta s jedným valcom. Viacvalcové motory (napr. Ténéré,
+Africa Twin) v katalógu zámerne nie sú.
 
 ## Štruktúra
 
@@ -143,15 +186,21 @@ app/src/main/kotlin/sk/rallysupport/otackomer/
   dsp/RpmEstimator.kt        NSDF, prvý vrchol nad prahom, parabola
   dsp/RpmSmoother.kt         medián 7 + EMA 0,4
   dsp/TachometerEngine.kt    spojenie, prahy, zamrazenie hodnoty
-  data/SettingsRepository.kt DataStore (pracovné pásmo, typ motora)
+  bike/Bike.kt               model, ročníky, voľnobeh (IdleSpec), stav overenia
+  bike/MotorcycleCatalog.kt  katalóg motocyklov s menom manuálu pri každej hodnote
+  bike/BikeProfile.kt        vybraný motocykel z nastavení (+ náhrady pri zmenách)
+  data/Settings.kt           nastavenia bez závislosti na Androide
+  data/SettingsRepository.kt DataStore (pracovné pásmo, motocykel, typ motora)
   ui/TachometerViewModel.kt  stav obrazovky, snímanie v coroutine
   ui/TachometerApp.kt        oprávnenie RECORD_AUDIO, keep-screen-on
   ui/TachometerScreen.kt     Compose UI (číslo, stupnica, graf, ovládanie)
+  ui/BikeUi.kt               karta motocykla a výber značka → model → ročník
   ui/theme/Theme.kt          paleta, Material 3
 app/src/test/kotlin/…/dsp/   unit testy so syntetickým signálom
+app/src/test/kotlin/…/bike/  testy katalógu a výberu motocykla
 ```
 
-Balík `dsp` nemá žiadne závislosti na Androide – dá sa testovať a ladiť na
+Balíky `dsp` a `bike` nemajú žiadne závislosti na Androide – dá sa testovať a ladiť na
 bežnom JVM.
 
 ## Tipy na meranie

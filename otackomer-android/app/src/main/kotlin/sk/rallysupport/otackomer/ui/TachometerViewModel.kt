@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import sk.rallysupport.otackomer.R
 import sk.rallysupport.otackomer.audio.AudioCapture
+import sk.rallysupport.otackomer.bike.BikeProfile
 import sk.rallysupport.otackomer.data.Settings
 import sk.rallysupport.otackomer.data.SettingsRepository
 import sk.rallysupport.otackomer.dsp.Reading
@@ -44,17 +45,16 @@ data class TachometerUiState(
     val audioUnprocessed: Boolean = false,
     /** Chyba pri otváraní mikrofónu (resource id) alebo `null`. */
     val errorRes: Int? = null,
+    /** Vybraný motocykel – určuje voľnobeh, strop zábehu a typ motora. */
+    val bike: BikeProfile = BikeProfile.resolve(Settings()),
 ) {
     val inIdleBand: Boolean
-        get() = rpm != null && !frozen && rpm in IDLE_BAND_LOW..IDLE_BAND_HIGH
+        get() {
+            val band = bike.idle?.acceptBand ?: return false
+            return rpm != null && !frozen && rpm in band
+        }
 
     companion object {
-        /** Predpísaný voľnobeh 500 EXC-F podľa manuálu KTM. */
-        const val IDLE_BAND_LOW = 1_800
-        const val IDLE_BAND_HIGH = 1_900
-
-        /** Strop pre prvú motohodinu zábehu podľa manuálu. */
-        const val RUN_IN_LIMIT = 7_000
         const val SCALE_MAX = 10_000
 
         /** 60 s pri analýze každých 200 ms. */
@@ -75,12 +75,19 @@ class TachometerViewModel(application: Application) : AndroidViewModel(applicati
     init {
         viewModelScope.launch {
             settingsRepository.settings.collect { settings ->
-                engine.setStrokeType(settings.strokeType)
+                val bike = BikeProfile.resolve(settings)
+                engine.setStrokeType(bike.strokeType)
                 _state.update {
+                    val strokeChanged = it.strokeType != bike.strokeType
                     it.copy(
-                        strokeType = settings.strokeType,
+                        bike = bike,
+                        strokeType = bike.strokeType,
                         workBandLow = settings.workBandLow,
                         workBandHigh = settings.workBandHigh,
+                        // Iný typ motora = iný prepočet; staré čísla by klamali.
+                        rpm = if (strokeChanged) null else it.rpm,
+                        peakRpm = if (strokeChanged) null else it.peakRpm,
+                        frozen = if (strokeChanged) false else it.frozen,
                     )
                 }
             }
@@ -138,10 +145,25 @@ class TachometerViewModel(application: Application) : AndroidViewModel(applicati
     @Suppress("MissingPermission")
     private fun startChecked() = start()
 
+    /** Prepínač 4T/2T – platí len pri vlastnom nastavení, model z katalógu typ určuje sám. */
     fun setStrokeType(type: StrokeType) {
+        if (!_state.value.bike.isCustom) return
         engine.setStrokeType(type)
         _state.update { it.copy(strokeType = type, rpm = null, frozen = false, peakRpm = null) }
         viewModelScope.launch { settingsRepository.setStrokeType(type) }
+    }
+
+    /** Model a ročník z katalógu. */
+    fun selectBike(modelId: String, year: Int) {
+        viewModelScope.launch { settingsRepository.setBike(modelId, year) }
+    }
+
+    /** Vlastný motocykel s ručne zadaným voľnobehom. */
+    fun selectCustomBike(idleLow: Int, idleHigh: Int, strokeType: StrokeType) {
+        val lo = idleLow.coerceIn(Settings.IDLE_MIN, Settings.IDLE_MAX)
+        val hi = idleHigh.coerceIn(Settings.IDLE_MIN, Settings.IDLE_MAX)
+        if (lo > hi) return
+        viewModelScope.launch { settingsRepository.setCustomBike(lo, hi, strokeType) }
     }
 
     fun setWorkBand(low: Int, high: Int) {

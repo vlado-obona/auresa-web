@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
@@ -24,6 +25,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import sk.rallysupport.otackomer.data.Settings as AppSettings
 
 /**
  * Koreň UI: rieši oprávnenie na mikrofón a držanie obrazovky zapnutej,
@@ -68,6 +70,21 @@ fun TachometerApp(
     LaunchedEffect(state.running) { onKeepScreenOn(state.running) }
     DisposableEffect(Unit) { onDispose { onKeepScreenOn(false) } }
 
+    var showBikePicker by rememberSaveable { mutableStateOf(false) }
+    if (showBikePicker) {
+        val bike = state.bike
+        BikePickerScreen(
+            current = bike,
+            customIdleLow = if (bike.isCustom) bike.idle?.low ?: AppSettings.DEFAULT_CUSTOM_IDLE_LOW else AppSettings.DEFAULT_CUSTOM_IDLE_LOW,
+            customIdleHigh = if (bike.isCustom) bike.idle?.high ?: AppSettings.DEFAULT_CUSTOM_IDLE_HIGH else AppSettings.DEFAULT_CUSTOM_IDLE_HIGH,
+            customStroke = bike.strokeType,
+            onSelect = viewModel::selectBike,
+            onSelectCustom = viewModel::selectCustomBike,
+            onClose = { showBikePicker = false },
+        )
+        return
+    }
+
     TachometerScreen(
         state = state,
         hasPermission = hasPermission,
@@ -88,6 +105,7 @@ fun TachometerApp(
         },
         onStrokeType = viewModel::setStrokeType,
         onWorkBand = viewModel::setWorkBand,
+        onOpenBikePicker = { showBikePicker = true },
     )
 }
 
