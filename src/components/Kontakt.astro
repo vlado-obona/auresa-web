@@ -87,18 +87,22 @@ const { defaultTyp } = Astro.props;
       if (res.ok && data.success) {
         form.reset();
         // status hlášku nahrádza ďakovná stránka. Redirect až keď GA4 + GTM potvrdia
-        // form_submit (inak sa hit pri rýchlej navigácii stratí, hlavne na mobile);
-        // poistka 800 ms presmeruje vždy — aj bez súhlasu či pri zablokovanom gtag.js.
+        // form_submit (inak sa hit pri rýchlej navigácii stratí, hlavne na mobile),
+        // najskôr však po 500 ms: GTM hlási Custom HTML tag (Meta fbq) hotový hneď po
+        // spustení, nie po odoslaní hitu — bez minima by sa Lead mohol odrezať.
+        // Poistka 800 ms presmeruje vždy — aj bez súhlasu či pri zablokovanom gtag.js.
+        const t0 = Date.now();
         let left = false;
         const go = () => { if (left) return; left = true; window.location.href = '/dakujeme/'; };
+        const goAfterMin = () => setTimeout(go, Math.max(0, 500 - (Date.now() - t0)));
         setTimeout(go, 800);
         // príznak pre záložný generate_lead na /dakujeme/ (AnalyticsEvents ho spotrebuje 1×)
         try { sessionStorage.setItem('au_form_ok', '1'); } catch {}
         // konverzný event LEN pri úspechu (nie pri chybe)
         try {
-          if (window.auTrack) window.auTrack('form_submit', { form_id: 'kontakt' }, { beacon: true, callback: go, timeout: 800 });
-          else go();
-        } catch { go(); }
+          if (window.auTrack) window.auTrack('form_submit', { form_id: 'kontakt' }, { beacon: true, callback: goAfterMin, timeout: 800 });
+          else goAfterMin();
+        } catch { goAfterMin(); }
       } else {
         status.setAttribute('data-state', 'err');
         status.textContent = data.message || 'Správu sa nepodarilo odoslať. Napíšte nám prosím priamo na info@auresa.sk.';
