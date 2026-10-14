@@ -53,6 +53,12 @@ const { defaultTyp } = Astro.props;
           <input id="k-hp" name="_hp" type="text" tabindex="-1" autocomplete="off" />
         </div>
 
+        <noscript>
+          <p class="au-form-note">
+            Formulár potrebuje zapnutý JavaScript. Napíšte nám na
+            <a href={`mailto:${SITE.email}`}>{SITE.email}</a> alebo zavolajte <a href={SITE.phoneHref}>{SITE.phone}</a>.
+          </p>
+        </noscript>
         <button type="submit" class="au-cta">Odoslať <span class="arr">→</span></button>
         <p class="au-form-status" data-au-status role="status" aria-live="polite"></p>
         <p class="au-form-note">
@@ -82,11 +88,24 @@ const { defaultTyp } = Astro.props;
         new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000)),
       ])
         .then((tok: any) => ({ t: tok.t, s: tok.s, at: Date.now() }))
-        .catch(() => ({ at: Date.now() }));
+        // zlyhanie si nepamätaj — submit skúsi token ešte raz (výpadok Wi-Fi pri prvom kliknutí)
+        .catch(() => { tokenReq = null; return { at: Date.now() }; });
     }
     return tokenReq;
   }
   form?.addEventListener('focusin', getToken, { once: true });
+
+  // Zámok proti dvojitému odoslaniu (2 e-maily, 2× Lead). Poistka 15 s: visiaci POST na slabej
+  // Wi-Fi nesmie zamknúť formulár natrvalo — duplikát je menšie zlo než strata.
+  const btn = form?.querySelector('button[type="submit"]');
+  let sending = false;
+  let lockTimer: number | undefined;
+  const unlock = () => {
+    sending = false;
+    if (lockTimer !== undefined) { clearTimeout(lockTimer); lockTimer = undefined; }
+    if (btn instanceof HTMLButtonElement) btn.disabled = false;
+  };
+  window.addEventListener('pageshow', (e) => { if (e.persisted) unlock(); }); // návrat z /dakujeme/ (bfcache)
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -94,6 +113,10 @@ const { defaultTyp } = Astro.props;
     const hp = form.querySelector('input[name="_hp"]');
     if (hp instanceof HTMLInputElement && hp.value.trim() !== '') return; // bot
     if (!form.checkValidity()) { form.reportValidity(); return; }
+    if (sending) return;
+    sending = true;
+    if (btn instanceof HTMLButtonElement) btn.disabled = true;
+    lockTimer = window.setTimeout(unlock, 15000);
 
     status.textContent = 'Odosielam…';
     status.removeAttribute('data-state');
@@ -129,10 +152,12 @@ const { defaultTyp } = Astro.props;
           else goAfterMin();
         } catch { goAfterMin(); }
       } else {
+        unlock();
         status.setAttribute('data-state', 'err');
         status.textContent = data.message || 'Správu sa nepodarilo odoslať. Napíšte nám prosím priamo na info@auresa.sk.';
       }
     } catch {
+      unlock();
       status.setAttribute('data-state', 'err');
       status.textContent = 'Správu sa nepodarilo odoslať. Napíšte nám prosím priamo na info@auresa.sk.';
     }
