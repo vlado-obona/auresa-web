@@ -1,5 +1,5 @@
 ---
-/* AnalyticsEvents — konverzné signály. Jeden helper window.auTrack(event, params):
+/* AnalyticsEvents — konverzné signály. Jeden helper window.auTrack(event, params, opts):
    (a) ak existuje window.gtag → gtag('event', event, …)      // GA4 priamo, PÔVODNÉ názvy
        (tel_click, mailto_click, cta_click, form_submit — kontinuita GA4 reportov)
    (b) vždy dataLayer.push({event: 'au_' + event, …})          // pre GTM / Meta tagy
@@ -9,15 +9,75 @@
    tohto commitu (tel_click→au_tel_click, mailto_click→au_mailto_click,
    form_submit→au_form_submit, cta_click→au_cta_click) + publish.
    Bez súhlasu gtag/GTM nebežia → reálne sa nič neodošle (push je len in-memory).
-   Delegované kliky: tel:, mailto:, CTA „Nezáväzná konzultácia" ([data-cta]). */
+   Delegované kliky: tel:, mailto:, CTA „Nezáväzná konzultácia" ([data-cta]).
+
+   opts (voliteľné, pre event pred odchodom zo stránky — form_submit):
+   - beacon:   GA4 hit cez transport_type 'beacon' (prežije navigáciu).
+   - callback: zavolá sa 1×, keď GA4 (event_callback) aj GTM (eventCallback) potvrdia
+               spracovanie; ak nebeží ani jeden (chýba súhlas), hneď. Pri zablokovanom
+               gtag.js/gtm.js nepríde nikdy → volajúci MUSÍ mať vlastnú poistku (timeout).
+   - timeout:  eventTimeout pre GTM (ms).
+
+   Kampaň: utm_campaign zo vstupnej URL sa uloží do sessionStorage (URL sa nemení)
+   a lead eventy (form_submit, generate_lead) ho nesú ako parameter lead_campaign.
+   Názov NIE „campaign" — ten GA4 používa pre vlastné údaje o zdroji návštevy.
+
+   Záložná konverzia: stránka s [data-au-lead-confirm] (/dakujeme/) pošle generate_lead,
+   ak formulár pri úspechu nastavil sessionStorage au_form_ok. Príznak sa zmaže
+   pred odoslaním → obnovenie stránky ani priamy vstup na URL nič nezapočíta. */
 ---
 <script>
   (function () {
-    function auTrack(event, params) {
-      params = params || {};
-      try { if (typeof window.gtag === 'function') window.gtag('event', event, params); } catch (e) {}
+    var CAMPAIGN_KEY = 'au_utm_campaign';
+    var FORM_OK_KEY = 'au_form_ok';            // nastavuje Kontakt.astro pri úspechu
+    var LEAD_EVENTS = { form_submit: 1, generate_lead: 1 };
+
+    function ssGet(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+    function ssSet(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} }
+    function ssDel(k) { try { sessionStorage.removeItem(k); } catch (e) {} }
+
+    try {
+      var utm = new URLSearchParams(location.search).get('utm_campaign');
+      if (utm && utm.trim()) ssSet(CAMPAIGN_KEY, utm.trim().slice(0, 100));
+    } catch (e) {}
+
+    function auTrack(event, params, opts) {
+      params = Object.assign({}, params || {});
+      opts = opts || {};
+      if (LEAD_EVENTS[event]) {
+        var campaign = ssGet(CAMPAIGN_KEY);
+        if (campaign) params.lead_campaign = campaign;
+      }
+
+      var cb = typeof opts.callback === 'function' ? opts.callback : null;
+      var sendGA = typeof window.gtag === 'function';
+      var waitGA = sendGA && window.__au_ga4 === true;   // false po odvolaní súhlasu
+      var waitGTM = window.__au_gtm === true;
+      var pending = (waitGA ? 1 : 0) + (waitGTM ? 1 : 0);
+      var called = false;
+      function finish() { if (!called) { called = true; cb(); } }
+      function ack() {   // každý kanál potvrdí najviac raz
+        var done = false;
+        return function () { if (done) return; done = true; if (--pending <= 0) finish(); };
+      }
+
+      if (sendGA) {
+        var ga = Object.assign({}, params);
+        if (opts.beacon) ga.transport_type = 'beacon';
+        var gaAck = cb && waitGA ? ack() : null;
+        if (gaAck) ga.event_callback = gaAck;
+        try { window.gtag('event', event, ga); } catch (e) { if (gaAck) gaAck(); }
+      }
+
       window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push(Object.assign({ event: 'au_' + event }, params));
+      var dl = Object.assign({ event: 'au_' + event }, params);
+      if (cb && waitGTM) {
+        dl.eventCallback = ack();
+        if (opts.timeout) dl.eventTimeout = opts.timeout;
+      }
+      window.dataLayer.push(dl);
+
+      if (cb && pending <= 0) finish();
     }
     window.auTrack = auTrack;
 
@@ -37,5 +97,10 @@
       var cta = a.getAttribute('data-cta');
       if (cta) auTrack('cta_click', { cta: cta, location: location.pathname });
     });
+
+    if (document.querySelector('[data-au-lead-confirm]') && ssGet(FORM_OK_KEY)) {
+      ssDel(FORM_OK_KEY);
+      auTrack('generate_lead', { form_id: 'kontakt' });
+    }
   })();
 </script>

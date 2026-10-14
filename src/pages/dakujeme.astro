@@ -1,13 +1,15 @@
 ---
 /* Ďakovná stránka po odoslaní formulára (redirect z Kontakt.astro).
-   noindex — nie je to obsahová stránka; vylúčená aj zo sitemap (astro.config filter). */
+   noindex — nie je to obsahová stránka; vylúčená aj zo sitemap (astro.config filter).
+   [data-au-lead-confirm] = záložný generate_lead (AnalyticsEvents), len s príznakom
+   z formulára — samotná návšteva URL nie je konverzia. */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../data/site';
 const title = 'Ďakujeme — Auresa Design Studio';
 const description = 'Vaša správa je u nás. Ozveme sa Vám do 24 hodín.';
 ---
 <BaseLayout title={title} description={description} noindex>
-  <section class="au-page-hero">
+  <section class="au-page-hero" data-au-lead-confirm>
     <div class="d1-eyebrow"><span class="d1-eyebrow-title">Správa odoslaná</span></div>
     <h1>Ďakujeme. <em>Správa je u nás.</em></h1>
   </section>

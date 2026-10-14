@@ -86,10 +86,19 @@ const { defaultTyp } = Astro.props;
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.success) {
         form.reset();
+        // status hlášku nahrádza ďakovná stránka. Redirect až keď GA4 + GTM potvrdia
+        // form_submit (inak sa hit pri rýchlej navigácii stratí, hlavne na mobile);
+        // poistka 800 ms presmeruje vždy — aj bez súhlasu či pri zablokovanom gtag.js.
+        let left = false;
+        const go = () => { if (left) return; left = true; window.location.href = '/dakujeme/'; };
+        setTimeout(go, 800);
+        // príznak pre záložný generate_lead na /dakujeme/ (AnalyticsEvents ho spotrebuje 1×)
+        try { sessionStorage.setItem('au_form_ok', '1'); } catch {}
         // konverzný event LEN pri úspechu (nie pri chybe)
-        if (window.auTrack) window.auTrack('form_submit', { form_id: 'kontakt' });
-        // status hlášku nahrádza ďakovná stránka; krátka pauza nech GA4/GTM beacony stihnú odísť
-        setTimeout(function () { window.location.href = '/dakujeme/'; }, 300);
+        try {
+          if (window.auTrack) window.auTrack('form_submit', { form_id: 'kontakt' }, { beacon: true, callback: go, timeout: 800 });
+          else go();
+        } catch { go(); }
       } else {
         status.setAttribute('data-state', 'err');
         status.textContent = data.message || 'Správu sa nepodarilo odoslať. Napíšte nám prosím priamo na info@auresa.sk.';
