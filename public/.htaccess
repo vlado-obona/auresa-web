@@ -16,6 +16,18 @@ ErrorDocument 404 /404.html
   # www -> non-www
   RewriteCond %{HTTP_HOST} ^www\.auresa\.sk$ [NC]
   RewriteRule ^ https://auresa.sk%{REQUEST_URI} [L,R=301]
+  # test.auresa.sk -> auresa.sk (po cutoveri rovnaký docroot ako prod; testovacie prostredie
+  # je staging.auresa.sk). /api/ nie — stará otvorená karta dostane od kontakt.php čitateľnú
+  # hlášku; .well-known nie — obnova certifikátu.
+  RewriteCond %{HTTP_HOST} ^test\.auresa\.sk$ [NC]
+  RewriteCond %{REQUEST_URI} !^/(api|\.well-known)/
+  RewriteRule ^ https://auresa.sk%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# vendor/ (PHPMailer z composeru) nemá byť dostupný cez web — kontakt.php ho načítava
+# zo súborového systému. Prezrádzal verziu knižnice. IfModule: bez mod_alias žiadna 500.
+<IfModule mod_alias.c>
+  RedirectMatch 404 ^/api/vendor/
 </IfModule>
 
 # NEINDEXovať test + staging subdomény (prod auresa.sk nematchuje → ostáva indexovateľný)
