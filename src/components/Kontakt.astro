@@ -1,5 +1,5 @@
 ---
-/* Kontakt — údaje + formulár (POST /api/kontakt.php).
+/* Kontakt — údaje + formulár (fetch JSON → /api/kontakt.php, časový token z /api/token.php).
    defaultTyp: voliteľné predvolenie selectu typ_projektu (LP stránky). */
 import { SITE, PROJECT_TYPES } from '../data/site';
 interface Props { defaultTyp?: string }
@@ -22,7 +22,7 @@ const { defaultTyp } = Astro.props;
     </div>
 
     <div>
-      <form class="au-contact-form" data-au-form action="/api/kontakt.php" method="POST">
+      <form class="au-contact-form" data-au-form method="POST">
         <div class="au-field">
           <label for="k-meno">Meno *</label>
           <input id="k-meno" name="meno" type="text" required autocomplete="name" placeholder="Vaše meno" />
@@ -67,6 +67,26 @@ const { defaultTyp } = Astro.props;
 <script>
   const form = document.querySelector('[data-au-form]');
   const status = document.querySelector('[data-au-status]');
+  // endpoint len v JS (nie v action), nech ho boty čítajúce HTML nenájdu
+  const ENDPOINT = '/api/kontakt.php';
+
+  // Časový token proti botom: vypýta sa pri prvom kliknutí do formulára, kontakt.php
+  // overí podpis a odstup aspoň 3 s. Keď token nepríde (sieť), formulár sa odošle aj tak
+  // — server chýbajúci token len označí, lead nezahodí.
+  const TOKEN_MIN_AGE_MS = 3200;
+  let tokenReq: Promise<{ t?: number; s?: string; at: number }> | null = null;
+  function getToken() {
+    if (!tokenReq) {
+      tokenReq = Promise.race([
+        fetch('/api/token.php', { headers: { Accept: 'application/json' }, cache: 'no-store' }).then((r) => r.json()),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000)),
+      ])
+        .then((tok: any) => ({ t: tok.t, s: tok.s, at: Date.now() }))
+        .catch(() => ({ at: Date.now() }));
+    }
+    return tokenReq;
+  }
+  form?.addEventListener('focusin', getToken, { once: true });
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -78,10 +98,15 @@ const { defaultTyp } = Astro.props;
     status.textContent = 'Odosielam…';
     status.removeAttribute('data-state');
     try {
-      const res = await fetch(form.action, {
+      const tok = await getToken();
+      // token mladší ako 3 s (napr. formulár obnovený prehliadačom a hneď odoslaný) → počkaj zvyšok
+      const wait = tok.t ? TOKEN_MIN_AGE_MS - (Date.now() - tok.at) : 0;
+      if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+      const payload = Object.assign(Object.fromEntries(new FormData(form).entries()), tok.t ? { _t: tok.t, _s: tok.s } : {});
+      const res = await fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(Object.fromEntries(new FormData(form).entries())),
+        body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.success) {
