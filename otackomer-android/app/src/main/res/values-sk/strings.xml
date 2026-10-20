@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Otáčkomer</string>
+    <string name="unit_rpm">ot./min</string>
+
+    <!-- stavový riadok -->
+    <string name="status_idle">Zapni motor a stlač Spustiť meranie</string>
+    <string name="status_stopped">Meranie zastavené</string>
+    <string name="status_listening">Počúvam…</string>
+    <string name="status_measuring">Meriam</string>
+    <string name="status_idle_band">Voľnobeh v predpísanom pásme</string>
+    <string name="status_weak">Slabý zvuk – priblíž telefón</string>
+    <string name="status_noisy">Priveľa hluku, hodnota zamrazená</string>
+    <string name="error_microphone">Mikrofón sa nepodarilo otvoriť – skús to znova</string>
+
+    <!-- štatistiky -->
+    <string name="stat_clarity">Zhoda signálu</string>
+    <string name="stat_peak">Max</string>
+    <string name="stat_source">Zdroj</string>
+    <string name="stat_source_fallback">%1$s (bez AGC/NS)</string>
+    <string name="stat_percent">%1$d %%</string>
+
+    <!-- ovládanie -->
+    <string name="button_start">Spustiť meranie</string>
+    <string name="button_stop">Zastaviť</string>
+    <string name="stroke_four">4T</string>
+    <string name="stroke_two">2T</string>
+
+    <!-- oprávnenie -->
+    <string name="permission_title">Prečo aplikácia potrebuje mikrofón?</string>
+    <string name="permission_rationale">Otáčky sa počítajú z rytmu zážihov v hluku motora. Aplikácia zvuk iba počúva – nič nenahráva, neukladá ani neodosiela, funguje úplne offline.</string>
+    <string name="permission_grant">Povoliť mikrofón</string>
+    <string name="permission_open_settings">Otvoriť nastavenia aplikácie</string>
+
+    <!-- pracovné pásmo -->
+    <string name="work_band_label">Pracovné pásmo (ot./min)</string>
+    <string name="work_band_low">od</string>
+    <string name="work_band_high">do</string>
+
+    <!-- motocykel -->
+    <string name="bike_custom_name">Vlastný motocykel</string>
+    <string name="bike_name_year">%1$s, ročník %2$d</string>
+    <string name="bike_idle">Voľnobeh %1$s ot./min</string>
+    <string name="bike_idle_unknown">Voľnobeh v manuáli neuvedený</string>
+    <string name="bike_unverified">orientačné</string>
+    <string name="bike_change">Zmeniť</string>
+
+    <!-- výber motocykla -->
+    <string name="picker_close">✕ Zavrieť</string>
+    <string name="picker_back">← Späť</string>
+    <string name="picker_title_brand">Vyber značku</string>
+    <string name="picker_title_model">%1$s – vyber model</string>
+    <string name="picker_title_year">%1$s – vyber ročník</string>
+    <string name="picker_title_custom">Vlastný motocykel</string>
+    <plurals name="picker_model_count">
+        <item quantity="one">%d model</item>
+        <item quantity="few">%d modely</item>
+        <item quantity="many">%d modelu</item>
+        <item quantity="other">%d modelov</item>
+    </plurals>
+    <string name="picker_cc">%1$s cm³</string>
+    <string name="picker_custom">Vlastné nastavenie</string>
+    <string name="picker_custom_hint">Motocykel nie je v zozname – zadáš voľnobeh z jeho manuálu</string>
+    <string name="picker_custom_explain">Zadaj predpísaný voľnobeh z manuálu svojho motocykla. Ak manuál uvádza jedno číslo, zadaj ho do oboch polí.</string>
+    <string name="picker_custom_idle">Voľnobeh (ot./min)</string>
+    <string name="picker_custom_invalid">Zadaj hodnoty od %1$s do %2$s, „od“ nesmie byť vyššie ako „do“.</string>
+    <string name="picker_custom_stroke">Typ motora</string>
+    <string name="picker_save">Uložiť</string>
+    <string name="picker_note">Hodnoty pochádzajú z manuálov výrobcov. Položky označené „orientačné“ sa nepodarilo overiť priamo v manuáli – pred nastavovaním ich porovnaj s manuálom k tvojmu motocyklu. Otáčkomer meria jednovalcové motory.</string>
+
+    <!-- info -->
+    <string name="info_idle_model">Sýte zelené pásmo %1$s ot./min je predpísaný voľnobeh pre %2$s.</string>
+    <string name="info_idle_custom">Sýte zelené pásmo %1$s ot./min je voľnobeh, ktorý si zadal pri vlastnom motocykli.</string>
+    <string name="info_idle_unknown">Manuál pre %1$s číselný voľnobeh neuvádza. Nastav čo najnižší voľnobeh, pri ktorom motor beží stabilne a nezhasína.</string>
+    <string name="info_idle_single">Manuál uvádza jedno číslo bez tolerancie, preto aplikácia berie ako „v pásme“ aj ±%1$d ot./min – to je presnosť merania, nie údaj výrobcu.</string>
+    <string name="info_run_in">Červená čiara na %1$s ot./min je strop zábehu podľa manuálu.</string>
+    <string name="info_work_band">Svetlé pásmo je tvoj pracovný rozsah. Výrobcovia ho väčšinou neuvádzajú, takže predvolených 3 500 – 7 000 je len východisko – prestav si ho podľa toho, ako motorku reálne jazdíš.</string>
+    <string name="info_placement">Telefón drž asi pol metra od koncovky výfuku, nie priamo v prúde plynov. Meranie je najpresnejšie na ustálených otáčkach.</string>
+    <string name="info_freeze">Ak zhoda signálu klesne pod 40 % alebo je zvuk príliš slabý, číslo sa zamrazí – vtedy je okolo priveľa hluku alebo je motorka ďaleko.</string>
+    <string name="info_source">Zdroj údajov: %1$s.</string>
+    <string name="info_source_unverified">Orientačná hodnota, neoverená priamo v manuáli (zdroj: %1$s). Pred nastavovaním ju porovnaj s manuálom.</string>
+
+    <!-- jazyk -->
+    <string name="language_label">Jazyk / Language</string>
+
+    <!-- prístupnosť -->
+    <string name="a11y_rpm">Otáčky %1$d za minútu</string>
+    <string name="a11y_rpm_none">Otáčky zatiaľ nie sú známe</string>
+    <string name="a11y_level">Vstupná úroveň %1$d percent</string>
+    <string name="a11y_scale">Stupnica otáčok 0 až 10 000 s pásmom voľnobehu a stropom zábehu</string>
+    <string name="a11y_chart">Priebeh otáčok za posledných 60 sekúnd</string>
+    <string name="a11y_stroke_group">Typ motora</string>
+    <string name="a11y_stroke_locked">Typ motora určuje vybraný model</string>
+</resources>

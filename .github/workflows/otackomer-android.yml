@@ -1,0 +1,65 @@
+name: Otáčkomer (Android APK)
+
+# Zostaví Android aplikáciu z otackomer-android/, spustí unit testy a APK
+# pripne k GitHub Release "otackomer-latest" (vždy prepísaný najnovším
+# buildom). Web (deploy.yml) sa tohto workflowu netýka.
+on:
+  push:
+    paths:
+      - 'otackomer-android/**'
+      - '.github/workflows/otackomer-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: otackomer-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: otackomer-android
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Unit testy algoritmu
+        run: ./gradlew --no-daemon testDebugUnitTest
+
+      - name: Zostav debug APK
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Premenuj APK
+        run: |
+          mkdir -p out
+          cp app/build/outputs/apk/debug/app-debug.apk "out/otackomer-${GITHUB_SHA::7}.apk"
+          cp app/build/outputs/apk/debug/app-debug.apk out/otackomer.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: otackomer-apk
+          path: otackomer-android/out/otackomer.apk
+          if-no-files-found: error
+
+      - name: Publikuj ako Release otackomer-latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete otackomer-latest --cleanup-tag --yes --repo "$GITHUB_REPOSITORY" || true
+          gh release create otackomer-latest \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "Otáčkomer – najnovší build (${GITHUB_SHA::7})" \
+            --notes "Debug APK zostavené z vetvy \`${GITHUB_REF_NAME}\`, commit ${GITHUB_SHA::7}. Inštalácia: stiahni otackomer.apk do telefónu, povoľ inštaláciu z neznámych zdrojov a otvor súbor." \
+            out/otackomer.apk "out/otackomer-${GITHUB_SHA::7}.apk"
